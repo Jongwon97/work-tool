@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MyBatis CRUD Generator</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d; --surface3:#2d333b;
+  --border:#30363d; --text:#cdd9e5; --muted:#768390;
+  --primary:#316dca; --primary-h:#388bfd;
+  --green:#57ab5a; --yellow:#e3b341; --orange:#cc7832;
+  --purple:#b392f0; --red:#f47067; --cyan:#80ccff; --teal:#4ac6a9;
+  --xml-tag:#f47067; --xml-attr:#6cb6ff; --xml-val:#96d0ff;
+  --xml-cmt:#636e7b; --sql-kw:#f47067; --sql-param:#57ab5a;
+  --radius:8px;
+}
+body { font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+
+/* HEADER */
+header { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+header h1 { font-size:1rem; font-weight:700; }
+.logo { color:var(--red); }
+.sub  { color:var(--muted); font-weight:400; font-size:.85rem; }
+.hdr-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+
+/* LAYOUT */
+.layout { display:grid; grid-template-columns:320px 1fr; flex:1; overflow:hidden; }
+
+/* PANEL */
+.panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); }
+.panel-title { padding:9px 14px; font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
+.panel-body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:14px; }
+
+/* FORM */
+.field { display:flex; flex-direction:column; gap:5px; }
+.field label { font-size:.75rem; font-weight:700; color:var(--muted); }
+input[type=text], textarea, select { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:inherit; font-size:.85rem; padding:7px 10px; width:100%; transition:border-color .15s; }
+input[type=text]:focus, textarea:focus, select:focus { outline:none; border-color:var(--primary-h); box-shadow:0 0 0 2px rgba(56,139,253,.15); }
+input::placeholder, textarea::placeholder { color:var(--muted); }
+textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-size:.82rem; line-height:1.6; }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+/* PK CHIPS */
+.pk-chips { display:flex; flex-wrap:wrap; gap:5px; min-height:32px; }
+.pk-chip { padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--surface2); color:var(--muted); transition:all .13s; user-select:none; }
+.pk-chip.active { background:rgba(52,109,202,.2); border-color:var(--primary-h); color:var(--primary-h); }
+.pk-hint { font-size:.7rem; color:var(--muted); margin-top:4px; }
+
+/* OPTIONS */
+.option-grid { display:flex; flex-direction:column; gap:6px; }
+.opt-row { display:flex; align-items:center; gap:8px; }
+.opt-row input[type=checkbox] { width:14px; height:14px; accent-color:var(--primary-h); cursor:pointer; flex-shrink:0; }
+.opt-row label { font-size:.8rem; color:var(--text); cursor:pointer; flex:1; }
+
+/* BUTTONS */
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; border-radius:6px; cursor:pointer; font-family:inherit; font-weight:600; font-size:.82rem; padding:7px 14px; transition:all .13s; }
+.btn:active { transform:scale(.96); }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-h); }
+.btn-gen { background:linear-gradient(135deg,#316dca,#7e5bef); color:#fff; font-size:.9rem; padding:10px; width:100%; }
+.btn-gen:hover { filter:brightness(1.1); }
+.btn-ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--surface3); }
+.btn-copy { background:rgba(87,171,90,.15); color:var(--green); border:1px solid rgba(87,171,90,.3); font-size:.75rem; padding:4px 10px; }
+.btn-copy:hover { background:rgba(87,171,90,.25); }
+.btn-copy-all { background:var(--green); color:#0d1117; padding:8px 16px; }
+.btn-copy-all:hover { filter:brightness(1.1); }
+.btn-xs { padding:3px 8px; font-size:.72rem; }
+
+/* OUTPUT */
+.output-panel { display:flex; flex-direction:column; overflow:hidden; }
+.output-header { padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+.output-header h3 { font-size:.8rem; font-weight:700; color:var(--muted); margin-right:4px; }
+.q-tabs { display:flex; gap:2px; overflow-x:auto; }
+.q-tab { padding:4px 12px; border-radius:5px; font-size:.75rem; font-weight:700; cursor:pointer; color:var(--muted); transition:all .13s; white-space:nowrap; border:1px solid transparent; }
+.q-tab:hover { color:var(--text); }
+.q-tab.active { background:var(--surface3); color:var(--text); border-color:var(--border); }
+.code-wrap { flex:1; overflow-y:auto; }
+.code-block { display:none; flex-direction:column; height:100%; }
+.code-block.active { display:flex; }
+.code-toolbar { padding:7px 14px; background:var(--surface2); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.code-toolbar .desc { font-size:.75rem; color:var(--muted); flex:1; }
+.code-pre { flex:1; overflow:auto; padding:16px 18px; font-family:'Consolas','Fira Code',monospace; font-size:.8rem; line-height:1.75; white-space:pre; background:var(--bg); color:var(--text); }
+.empty-msg { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--muted); gap:10px; font-size:.9rem; text-align:center; line-height:1.8; }
+.empty-msg .icon { font-size:2.5rem; }
+
+/* HIGHLIGHT */
+.xt { color:var(--xml-tag); }
+.xb { color:var(--muted); }
+.xa { color:var(--xml-attr); }
+.xv { color:var(--xml-val); }
+.xc { color:var(--xml-cmt); font-style:italic; }
+.sk { color:var(--sql-kw); font-weight:700; }
+.st { color:var(--yellow); }
+.sp { color:var(--sql-param); }
+.si { color:var(--purple); }
+
+/* TOAST */
+#toast { position:fixed; bottom:18px; right:18px; background:var(--surface3); color:var(--text); padding:8px 16px; border-radius:8px; font-size:.82rem; font-weight:600; border:1px solid var(--border); opacity:0; transform:translateY(8px); transition:all .22s; z-index:100; }
+#toast.show { opacity:1; transform:translateY(0); }
+
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:3px; }
+
+@media (max-width:700px) {
+  .layout { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+  .panel { border-right:none; border-bottom:1px solid var(--border); max-height:50vh; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🗂️ <span class="logo">MyBatis</span> <span class="sub">CRUD Generator</span></h1>
+  <div class="hdr-actions">
+    <button class="btn btn-ghost btn-xs" onclick="loadSample()">샘플 불러오기</button>
+    <button class="btn btn-copy-all btn-xs" onclick="copyAll()">전체 복사</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="panel">
+    <div class="panel-title">입력</div>
+    <div class="panel-body">
+
+      <div class="row2">
+        <div class="field">
+          <label>테이블명</label>
+          <input type="text" id="table-name" placeholder="TB_USER" oninput="onInputChange()" />
+        </div>
+        <div class="field">
+          <label>Namespace</label>
+          <input type="text" id="namespace" placeholder="com.example.UserMapper" oninput="onInputChange()" />
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+        <div class="field">
+          <label>컬럼 목록 (줄 구분)</label>
+          <textarea id="columns" rows="9"
+            placeholder="USER_ID&#10;USER_NAME&#10;EMAIL&#10;PHONE_NO&#10;STATUS_CD&#10;REG_DT&#10;UPD_DT"
+            oninput="onInputChange()" style="height:192px"></textarea>
+        </div>
+        <div class="field">
+          <label>주석 (컬럼 순서 일치, 줄 구분)</label>
+          <textarea id="comments" rows="9"
+            placeholder="사용자 ID&#10;사용자 이름&#10;이메일&#10;전화번호&#10;상태 코드&#10;등록일시&#10;수정일시"
+            oninput="onInputChange()" style="height:192px"></textarea>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>PK 컬럼 선택 <span style="color:var(--muted);font-weight:400">(WHERE 기준)</span></label>
+        <div class="pk-chips" id="pk-chips">
+          <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+        </div>
+        <p class="pk-hint">클릭으로 PK 토글 · 여러 개 선택 가능</p>
+      </div>
+
+      <div class="field">
+        <label>옵션</label>
+        <div class="option-grid">
+          <div class="opt-row">
+            <input type="checkbox" id="opt-dynamic-select" checked onchange="onInputChange()" />
+            <label for="opt-dynamic-select">SELECT LIST에 동적 &lt;if&gt; 조건 포함</label>
+          </div>
+          <div class="opt-row">
+            <input type="checkbox" id="opt-dynamic-update" checked onchange="onInputChange()" />
+            <label for="opt-dynamic-update">UPDATE에 동적 &lt;set&gt; 사용</label>
+          </div>
+          <div class="opt-row">
+            <input type="checkbox" id="opt-useGeneratedKeys" onchange="onInputChange()" />
+            <label for="opt-useGeneratedKeys">INSERT useGeneratedKeys</label>
+          </div>
+          <div class="opt-row">
+            <input type="checkbox" id="opt-include-pk-insert" checked onchange="onInputChange()" />
+            <label for="opt-include-pk-insert">INSERT에 PK 컬럼 포함</label>
+          </div>
+          <div class="opt-row">
+            <input type="checkbox" id="opt-wrap-mapper" checked onchange="onInputChange()" />
+            <label for="opt-wrap-mapper">&lt;mapper&gt; 태그로 감싸기</label>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-gen" onclick="generate()">⚡ CRUD 쿼리 생성 (Ctrl+Enter)</button>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="output-panel">
+    <div class="output-header">
+      <h3>결과</h3>
+      <div class="q-tabs">
+        <div class="q-tab active"       onclick="switchTab('all',this)">전체</div>
+        <div class="q-tab"              onclick="switchTab('select-one',this)">SELECT</div>
+        <div class="q-tab"              onclick="switchTab('select-list',this)">SELECT LIST</div>
+        <div class="q-tab"              onclick="switchTab('insert',this)">INSERT</div>
+        <div class="q-tab"              onclick="switchTab('update',this)">UPDATE</div>
+        <div class="q-tab"              onclick="switchTab('delete',this)">DELETE</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+
+      <div class="code-block active" id="block-all">
+        <div class="code-toolbar">
+          <span class="desc">전체 CRUD 쿼리</span>
+          <button class="btn btn-copy" onclick="copyBlock('all')">📋 전체 복사</button>
+        </div>
+        <div class="code-pre empty-msg" id="code-all">
+          <span class="icon">🗂️</span>
+          <span>왼쪽에 테이블명과 컬럼을 입력 후<br>⚡ 버튼을 눌러 생성하세요</span>
+        </div>
+      </div>
+
+      <div class="code-block" id="block-select-one">
+        <div class="code-toolbar">
+          <span class="desc">단건 조회 — PK로 하나의 행 조회</span>
+          <button class="btn btn-copy" onclick="copyBlock('select-one')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-select-one"></div>
+      </div>
+
+      <div class="code-block" id="block-select-list">
+        <div class="code-toolbar">
+          <span class="desc">목록 조회 — 동적 조건으로 다건 조회</span>
+          <button class="btn btn-copy" onclick="copyBlock('select-list')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-select-list"></div>
+      </div>
+
+      <div class="code-block" id="block-insert">
+        <div class="code-toolbar">
+          <span class="desc">등록 — 새 행 삽입</span>
+          <button class="btn btn-copy" onclick="copyBlock('insert')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-insert"></div>
+      </div>
+
+      <div class="code-block" id="block-update">
+        <div class="code-toolbar">
+          <span class="desc">수정 — PK 기준 행 업데이트</span>
+          <button class="btn btn-copy" onclick="copyBlock('update')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-update"></div>
+      </div>
+
+      <div class="code-block" id="block-delete">
+        <div class="code-toolbar">
+          <span class="desc">삭제 — PK 기준 행 삭제</span>
+          <button class="btn btn-copy" onclick="copyBlock('delete')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-delete"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+let pkCols = new Set();
+let generatedSQL = {};
+
+/* ── name converters ── */
+function toCamel(col) {
+  return col.trim().toLowerCase().replace(/_([a-z0-9])/g, (_, c) => c.toUpperCase());
+}
+function toPascal(str) {
+  const c = toCamel(str);
+  return c.charAt(0).toUpperCase() + c.slice(1);
+}
+function param(col) { return '#{p.' + toCamel(col) + '}'; }
+
+function getColumns() {
+  return document.getElementById('columns').value
+    .split('\n').map(c => c.trim().replace(/,/g, '')).filter(Boolean);
+}
+
+/* 주석 textarea → 컬럼 순서와 1:1 대응하는 배열 (빈 줄은 '' 유지) */
+function getComments() {
+  const raw = document.getElementById('comments').value.split('\n');
+  return raw.map(c => c.trim());
+}
+
+/* col → comment 매핑 빌드 */
+function buildCmap(cols, cmts) {
+  const cmap = {};
+  cols.forEach((c, i) => { if (cmts[i]) cmap[c] = cmts[i]; });
+  return cmap;
+}
+function getTable()  { return document.getElementById('table-name').value.trim().toUpperCase(); }
+function getNamespace() { return document.getElementById('namespace').value.trim(); }
+function getEntityName() {
+  const t = document.getElementById('table-name').value.trim();
+  if (!t) return 'Entity';
+  return t.replace(/^(TBL?_|TB_|T_)/i,'').split('_')
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+}
+
+/* ── PK chips ── */
+function renderPkChips() {
+  const cols = getColumns();
+  const wrap = document.getElementById('pk-chips');
+  if (!cols.length) {
+    wrap.innerHTML = '<span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>';
+    return;
+  }
+  [...pkCols].forEach(pk => { if (!cols.includes(pk)) pkCols.delete(pk); });
+  wrap.innerHTML = cols.map(c =>
+    '<div class="pk-chip' + (pkCols.has(c)?' active':'') + '" onclick="togglePk(\'' + c + '\')">' + c + '</div>'
+  ).join('');
+}
+
+function togglePk(col) {
+  pkCols.has(col) ? pkCols.delete(col) : pkCols.add(col);
+  renderPkChips();
+  if (getTable()) generate();
+}
+
+function onInputChange() {
+  renderPkChips();
+  if (getTable() && getColumns().length > 0) generate();
+}
+
+/* ── SQL FORMAT HELPERS ── */
+
+// 오른쪽 정렬 키워드 prefix: 'SELECT'→'SELECT ', 'FROM'→'  FROM ', 'WHERE'→' WHERE '
+function kwPfx(kw, ind) { return ind + kw.padStart(6) + ' '; }
+
+// WHERE / AND pk 블록 (kwWidth: 키워드 컬럼 너비)
+// SELECT → kwWidth=6 (SELECT 끝 맞춤), UPDATE → kwWidth=10 (    UPDATE 끝 맞춤)
+// DELETE → kwWidth=9 (    DELETE 시작 맞춤 = '    WHERE')
+function buildWherePk(pks, ind, kwWidth) {
+  return pks.map((pk, i) =>
+    ind + (i === 0 ? 'WHERE' : 'AND').padStart(kwWidth) + ' ' + pk + ' = ' + param(pk)
+  ).join('\n');
+}
+
+// SELECT 컬럼 블록 (콤마 선행 + 인라인 주석 정렬)
+// cols: string[], cmap: {col→comment}, ind: mapper indent
+function selColBlock(cols, cmap, ind) {
+  const hasCmt   = cols.some(c => cmap[c]);
+  const maxLen   = hasCmt ? Math.max(...cols.map(c => c.length)) : 0;
+  return cols.map((c, i) => {
+    const cmt  = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
+    const name = (hasCmt && cmt) ? c.padEnd(maxLen) : c;
+    return (i === 0 ? kwPfx('SELECT', ind) : kwPfx(',', ind)) + name + cmt;
+  }).join('\n');
+}
+
+/* ── GENERATE ── */
+function generate() {
+  const table  = getTable();
+  const cols   = getColumns();
+  const ns     = getNamespace();
+  const entity = getEntityName();
+  if (!table || !cols.length) { toast('⚠️ 테이블명과 컬럼을 입력하세요'); return; }
+
+  const pks       = pkCols.size > 0 ? [...pkCols] : [cols[0]];
+  const nonPkCols = cols.filter(c => !pks.includes(c));
+
+  const dynSel  = document.getElementById('opt-dynamic-select').checked;
+  const dynUpd  = document.getElementById('opt-dynamic-update').checked;
+  const useGK   = document.getElementById('opt-useGeneratedKeys').checked;
+  const inclPK  = document.getElementById('opt-include-pk-insert').checked;
+  const wrapMp  = document.getElementById('opt-wrap-mapper').checked;
+  const ind     = wrapMp ? '    ' : '';
+
+  /* 주석 매핑 */
+  const cmap       = buildCmap(cols, getComments());
+  const hasCmt     = Object.keys(cmap).length > 0;
+  const maxColLen  = hasCmt ? Math.max(...cols.map(c => c.length)) : 0;
+
+  // SELECT 내부 SQL은 <select> 태그 기준으로 4칸 추가 들여쓰기
+  const sqlInd = ind + '    ';
+
+  /* SELECT ONE ― 내부 SQL은 sqlInd 기준 */
+  const qSelectOne = [
+    ind+'<select id="select'+entity+'" parameterType="Map" resultType="Map">',
+    selColBlock(cols, cmap, sqlInd),
+    kwPfx('FROM', sqlInd) + table,
+    buildWherePk(pks, sqlInd, 6),
+    ind+'</select>'
+  ].join('\n');
+
+  /* SELECT LIST ― 내부 SQL은 sqlInd 기준 */
+  let qSelectList;
+  if (dynSel) {
+    const ifConds = cols.map(c =>
+      sqlInd+'    <if test="p.'+toCamel(c)+' != null and p.'+toCamel(c)+' != \'\'">\n'+
+      sqlInd+'        AND '+c+' = '+param(c)+'\n'+
+      sqlInd+'    </if>'
+    ).join('\n');
+    qSelectList = [
+      ind+'<select id="select'+entity+'List" parameterType="Map" resultType="Map">',
+      selColBlock(cols, cmap, sqlInd),
+      kwPfx('FROM', sqlInd) + table,
+      sqlInd+'<where>',
+      ifConds,
+      sqlInd+'</where>',
+      ind+'</select>'
+    ].join('\n');
+  } else {
+    qSelectList = [
+      ind+'<select id="select'+entity+'List" parameterType="Map" resultType="Map">',
+      selColBlock(cols, cmap, sqlInd),
+      kwPfx('FROM', sqlInd) + table,
+      buildWherePk(pks, sqlInd, 6),
+      ind+'</select>'
+    ].join('\n');
+  }
+
+  /* INSERT — 컬럼명 정렬 후 인라인 주석 */
+  const insCols = (inclPK ? cols : nonPkCols);
+  const gkAttr  = useGK ? ' useGeneratedKeys="true" keyProperty="'+toCamel(pks[0])+'"' : '';
+  const insMaxLen = hasCmt ? Math.max(...insCols.map(c => c.length)) : 0;
+  const insColStr = insCols.map((c, i) => {
+    const comma  = i < insCols.length - 1 ? ',' : ' ';
+    const cmt    = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
+    const colPad = (hasCmt && cmt) ? (c + comma).padEnd(insMaxLen + 2) : c + comma;
+    return ind + '        ' + colPad + cmt;
+  }).join('\n');
+  const insValStr = insCols.map((c, i) =>
+    ind + '        ' + param(c) + (i < insCols.length - 1 ? ',' : '')
+  ).join('\n');
+  const qInsert = [
+    ind+'<insert id="insert'+entity+'" parameterType="Map"'+gkAttr+'>',
+    ind+'    INSERT INTO '+table+' (',
+    insColStr,
+    ind+'    ) VALUES (',
+    insValStr,
+    ind+'    )',
+    ind+'</insert>'
+  ].join('\n');
+
+  /* UPDATE — SET 절에 인라인 주석 */
+  const updMaxLen = Math.max(...nonPkCols.map(c => c.length));
+  let qUpdate;
+  if (dynUpd) {
+    // max length of full "COL = #{p.val}," expression for comment alignment
+    const dynMaxExpr = hasCmt ? Math.max(...nonPkCols.map(c =>
+      (c.padEnd(updMaxLen) + ' = ' + param(c) + ',').length
+    )) : 0;
+    const setConds = nonPkCols.map(c => {
+      const cmt  = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
+      const expr = c.padEnd(updMaxLen) + ' = ' + param(c) + ',';
+      const line = cmt ? expr.padEnd(dynMaxExpr) + cmt : expr;
+      return ind+'        <if test="p.'+toCamel(c)+' != null">\n'+
+             ind+'                '+line+'\n'+
+             ind+'        </if>';
+    }).join('\n');
+    qUpdate = [
+      ind+'<update id="update'+entity+'" parameterType="Map">',
+      ind+'    UPDATE '+table,
+      ind+'    <set>',
+      setConds,
+      ind+'    </set>',
+      buildWherePk(pks, ind, 10),
+      ind+'</update>'
+    ].join('\n');
+  } else {
+    // max length of full "COL = #{p.val}," expression for comment alignment
+    const statMaxExpr = hasCmt ? Math.max(...nonPkCols.map((c, i) =>
+      (c.padEnd(updMaxLen) + ' = ' + param(c) + (i < nonPkCols.length - 1 ? ',' : '')).length
+    )) : 0;
+    const setStat = nonPkCols.map((c, i) => {
+      const comma = i < nonPkCols.length - 1 ? ',' : '';
+      const cmt   = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
+      const expr  = c.padEnd(updMaxLen) + ' = ' + param(c) + comma;
+      const line  = cmt ? expr.padEnd(statMaxExpr) + cmt : expr;
+      return ind + '        ' + line;
+    }).join('\n');
+    qUpdate = [
+      ind+'<update id="update'+entity+'" parameterType="Map">',
+      ind+'    UPDATE '+table+' SET',
+      setStat,
+      buildWherePk(pks, ind, 10),
+      ind+'</update>'
+    ].join('\n');
+  }
+
+  /* DELETE ― WHERE를 '    DELETE' 시작에 맞춰 정렬 (kwWidth=9 → '    WHERE') */
+  const qDelete = [
+    ind+'<delete id="delete'+entity+'" parameterType="Map">',
+    ind+'    DELETE FROM '+table,
+    buildWherePk(pks, ind, 10),
+    ind+'</delete>'
+  ].join('\n');
+
+  /* ALL */
+  const banner = '    <!-- ==================== '+table+' ==================== -->';
+  const body = [
+    banner,
+    '',
+    '    <!-- 단건 조회 -->',
+    qSelectOne,
+    '',
+    '    <!-- 목록 조회 -->',
+    qSelectList,
+    '',
+    '    <!-- 등록 -->',
+    qInsert,
+    '',
+    '    <!-- 수정 -->',
+    qUpdate,
+    '',
+    '    <!-- 삭제 -->',
+    qDelete
+  ];
+
+  let qAll;
+  if (wrapMp) {
+    const nsAttr = ns ? ' namespace="'+ns+'"' : '';
+    qAll = '<mapper'+nsAttr+'>\n\n' + body.join('\n') + '\n\n</mapper>';
+  } else {
+    qAll = body.map(l => l.startsWith('    ') ? l.slice(4) : l).join('\n');
+  }
+
+  generatedSQL = {
+    'all': qAll,
+    'select-one':  stripInd(qSelectOne, ind),
+    'select-list': stripInd(qSelectList, ind),
+    'insert':      stripInd(qInsert, ind),
+    'update':      stripInd(qUpdate, ind),
+    'delete':      stripInd(qDelete, ind)
+  };
+
+  renderOutput();
+  toast('✅ 쿼리 생성 완료!');
+}
+
+function stripInd(sql, ind) {
+  if (!ind) return sql;
+  return sql.split('\n').map(l => l.startsWith(ind) ? l.slice(ind.length) : l).join('\n');
+}
+
+/* ── RENDER ── */
+function renderOutput() {
+  Object.entries(generatedSQL).forEach(([key, sql]) => {
+    const el = document.getElementById('code-'+key);
+    el.className = 'code-pre';
+    el.innerHTML = highlight(sql);
+  });
+}
+
+/* ── HIGHLIGHT ── */
+const SQL_KW = ['SELECT','FROM','WHERE','AND','OR','NOT','IN','BETWEEN','LIKE','IS','NULL',
+  'INSERT','INTO','VALUES','UPDATE','SET','DELETE','INNER','LEFT','RIGHT','JOIN','ON',
+  'GROUP BY','ORDER BY','HAVING','LIMIT','OFFSET','DISTINCT','AS','CASE','WHEN',
+  'THEN','ELSE','END','COUNT','SUM','MIN','MAX','AVG','DESC','ASC','BY'];
+
+function highlight(code) {
+  let s = esc(code);
+  // XML comments
+  s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="xc">$1</span>');
+  // MyBatis params
+  s = s.replace(/(#\{[^}]+\})/g, '<span class="sp">$1</span>');
+  // if test attr value
+  s = s.replace(/(test=&quot;)([^&"]+)(&quot;)/g, '$1<span class="si">$2</span>$3');
+  // XML tags
+  s = s.replace(/(&lt;\/?)([\w:-]+)([^&<>]*?)(\/?)(&gt;)/g, (m, open, tag, attrs, sc, close) => {
+    const ah = attrs.replace(/([\w:-]+)(\s*=\s*)(&quot;[^&]*&quot;)/g,
+      '<span class="xa">$1</span>$2<span class="xv">$3</span>');
+    return '<span class="xb">'+open+'</span><span class="xt">'+tag+'</span>'+ah+'<span class="xb">'+sc+close+'</span>';
+  });
+  // SQL keywords
+  SQL_KW.forEach(kw => {
+    s = s.replace(new RegExp('(?<![\\w<])\\b('+kw+')\\b(?![^<]*>)','g'),
+      '<span class="sk">$1</span>');
+  });
+  return s;
+}
+
+function esc(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+/* ── TABS ── */
+function switchTab(key, el) {
+  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('block-'+key).classList.add('active');
+}
+
+/* ── COPY ── */
+function copyBlock(key) {
+  if (!generatedSQL[key]) { toast('⚠️ 먼저 쿼리를 생성하세요'); return; }
+  navigator.clipboard.writeText(generatedSQL[key]).then(() => toast('📋 복사됐어요!'));
+}
+function copyAll() {
+  if (!generatedSQL.all) { toast('⚠️ 먼저 쿼리를 생성하세요'); return; }
+  navigator.clipboard.writeText(generatedSQL.all).then(() => toast('📋 전체 쿼리 복사 완료!'));
+}
+
+/* ── SAMPLE ── */
+function loadSample() {
+  document.getElementById('table-name').value = 'TB_USER';
+  document.getElementById('namespace').value = 'com.example.mapper.UserMapper';
+  document.getElementById('columns').value  = 'USER_ID\nUSER_NAME\nEMAIL\nPHONE_NO\nSTATUS_CD\nREG_DT\nUPD_DT';
+  document.getElementById('comments').value = '사용자 ID\n사용자 이름\n이메일\n전화번호\n상태 코드\n등록일시\n수정일시';
+  pkCols = new Set(['USER_ID']);
+  renderPkChips();
+  generate();
+}
+
+/* ── TOAST ── */
+let toastT;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastT);
+  toastT = setTimeout(() => el.classList.remove('show'), 2000);
+}
+
+/* ── KEYBOARD ── */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='Enter') { generate(); e.preventDefault(); }
+  if ((e.ctrlKey||e.metaKey) && e.shiftKey && e.key==='c') { copyAll(); e.preventDefault(); }
+});
+</script>
+</body>
+</html>
