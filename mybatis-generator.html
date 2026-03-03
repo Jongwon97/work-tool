@@ -20,33 +20,84 @@ body { font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif; background:var(-
 
 /* HEADER */
 header { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
-header h1 { font-size:1rem; font-weight:700; }
+header h1 { font-size:1.25rem; font-weight:700; }
 .logo { color:var(--red); }
-.sub  { color:var(--muted); font-weight:400; font-size:.85rem; }
+.sub  { color:var(--muted); font-weight:400; font-size:1.05rem; }
 .hdr-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
 
 /* LAYOUT */
-.layout { display:grid; grid-template-columns:400px 1fr; flex:1; overflow:hidden; }
+.layout { display:grid; grid-template-columns:500px 1fr; flex:1; overflow:hidden; }
 
 /* PANEL */
-.panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); }
+.panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); background:var(--surface2); }
 .panel-title { padding:9px 14px; font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
 .panel-body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:14px; }
 
+/* NAMESPACE BAR */
+.namespace-bar { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 12px; display:flex; align-items:center; gap:8px; }
+.namespace-bar label { font-size:.72rem; font-weight:700; color:var(--muted); white-space:nowrap; text-transform:uppercase; letter-spacing:.05em; }
+.namespace-bar input { background:transparent; border:none; color:var(--text); font-family:inherit; font-size:.85rem; flex:1; outline:none; }
+.namespace-bar input::placeholder { color:var(--muted); }
+
 /* FORM */
 .field { display:flex; flex-direction:column; gap:5px; }
-.field label { font-size:.75rem; font-weight:700; color:var(--muted); }
-input[type=text], textarea, select { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:inherit; font-size:.85rem; padding:7px 10px; width:100%; transition:border-color .15s; }
+.field label { font-size:.82rem; font-weight:700; color:var(--text); }
+input[type=text], textarea, select { background:var(--surface3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:inherit; font-size:.85rem; padding:7px 10px; width:100%; transition:border-color .15s; }
 input[type=text]:focus, textarea:focus, select:focus { outline:none; border-color:var(--primary-h); box-shadow:0 0 0 2px rgba(56,139,253,.15); }
 input::placeholder, textarea::placeholder { color:var(--muted); }
 textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-size:.82rem; line-height:1.6; }
 .row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3 { display:grid; grid-template-columns:2fr 1fr; gap:10px; }
 
-/* PK CHIPS */
-.pk-chips { display:flex; flex-wrap:wrap; gap:5px; min-height:32px; }
-.pk-chip { padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--surface2); color:var(--muted); transition:all .13s; user-select:none; }
-.pk-chip.active { background:rgba(52,109,202,.2); border-color:var(--primary-h); color:var(--primary-h); }
+/* PK / IN / LIKE CHIPS */
+.pk-chips { display:flex; flex-direction:column; gap:4px; min-height:32px; }
+.chip-row { display:flex; align-items:flex-start; gap:6px; }
+.chip-row-lbl { font-size:.63rem; font-weight:700; align-self:flex-start; margin-top:2px; padding:2px 6px; border-radius:3px; white-space:nowrap; max-width:80px; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; }
+.chip-row-lbl.base-lbl { color:var(--text); background:var(--surface3); border:1px solid var(--border); }
+.chip-row-lbl.join-lbl { color:var(--yellow); background:rgba(227,179,65,.1); border:1px solid rgba(227,179,65,.25); }
+.chip-row-chips { display:flex; flex-wrap:wrap; gap:5px; flex:1; }
+.pk-chip { padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--muted); transition:all .13s; user-select:none; }
+.pk-chip.active       { background:rgba(52,109,202,.2);   border-color:var(--primary-h); color:var(--primary-h); }
+.pk-chip.eq-active    { background:rgba(87,171,90,.15);   border-color:var(--green);     color:var(--green); }
+.pk-chip.in-active    { background:rgba(74,198,169,.15);  border-color:var(--teal);      color:var(--teal); }
+.pk-chip.like-active  { background:rgba(204,120,50,.15);  border-color:var(--orange);    color:var(--orange); }
+.pk-chip.date-active  { background:rgba(179,146,240,.15); border-color:var(--purple);    color:var(--purple); }
+.pk-chip.disabled     { opacity:0.28; cursor:not-allowed; filter:grayscale(1); pointer-events:none; }
 .pk-hint { font-size:.7rem; color:var(--muted); margin-top:4px; }
+
+/* 조건 컬럼 그룹 */
+.cond-group { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:0; display:flex; flex-direction:column; }
+.cond-group-title { padding:10px 14px; font-size:.95rem; font-weight:700; color:var(--text); border-bottom:1px solid var(--border); }
+.cond-section { padding:12px 14px; display:flex; flex-direction:column; gap:6px; border-left:3px solid transparent; }
+.cond-section + .cond-section { border-top:1px solid var(--border); }
+.cond-section.pk-sec   { border-left-color:var(--primary-h); }
+.cond-section.eq-sec   { border-left-color:var(--green); }
+.cond-section.in-sec   { border-left-color:var(--teal); }
+.cond-section.like-sec { border-left-color:var(--orange); }
+.cond-section.date-sec { border-left-color:var(--purple); }
+.cond-section label { font-size:.82rem; font-weight:700; color:var(--text); }
+
+/* JOIN SECTION */
+.join-section-hdr { display:flex; align-items:center; justify-content:space-between; }
+.join-section-hdr .lbl { font-size:.92rem; font-weight:700; color:var(--text); }
+.base-card { background:var(--bg); border:1px solid rgba(56,139,253,.25); border-left:3px solid var(--primary-h); border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:8px; }
+.base-card-lbl { font-size:.92rem; font-weight:700; color:var(--text); letter-spacing:.04em; }
+.join-card { background:var(--bg); border:1px solid rgba(227,179,65,.35); border-left:3px solid var(--yellow); border-radius:6px; padding:10px 12px; display:flex; flex-direction:column; gap:7px; margin-top:5px; }
+.join-row-main { display:flex; gap:6px; align-items:center; }
+.join-type { width:115px; flex-shrink:0; }
+.join-alias-input { width:64px !important; flex-shrink:0; }
+.join-cols-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.join-sub-lbl { font-size:.75rem; color:var(--text); margin-bottom:3px; font-weight:600; }
+.btn-remove { background:transparent; border:1px solid rgba(244,112,103,.3); color:var(--red); border-radius:4px; cursor:pointer; padding:3px 7px; font-size:.8rem; flex-shrink:0; transition:all .13s; }
+.btn-remove:hover { background:rgba(244,112,103,.15); }
+/* ON BUILDER */
+.on-builder { display:flex; flex-direction:column; gap:5px; }
+.on-builder-row { display:flex; gap:5px; align-items:center; }
+.on-builder-row select { flex:1; min-width:0; font-size:.78rem; }
+.on-eq { color:var(--muted); font-size:.85rem; font-weight:700; flex-shrink:0; padding:0 3px; }
+.on-cond-list { display:flex; flex-direction:column; gap:3px; }
+.on-cond-item { display:flex; align-items:center; gap:6px; background:var(--surface3); border:1px solid var(--border); border-radius:4px; padding:3px 8px; }
+.on-cond-text { flex:1; font-family:'Consolas','Fira Code',monospace; font-size:.75rem; color:var(--cyan); }
 
 /* OPTIONS */
 .option-grid { display:flex; flex-direction:column; gap:6px; }
@@ -71,9 +122,10 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 
 /* OUTPUT */
 .output-panel { display:flex; flex-direction:column; overflow:hidden; }
-.output-header { padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; flex-wrap:wrap; }
-.output-header h3 { font-size:.8rem; font-weight:700; color:var(--muted); margin-right:4px; }
-.q-tabs { display:flex; gap:2px; overflow-x:auto; }
+.output-header { padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0; flex-shrink:0; flex-wrap:wrap; }
+.output-label { background:var(--primary); color:#fff; padding:3px 10px; border-radius:4px; font-size:.72rem; font-weight:700; letter-spacing:.06em; white-space:nowrap; flex-shrink:0; }
+.output-divider { width:1px; height:20px; background:var(--border); margin:0 12px; flex-shrink:0; }
+.q-tabs { display:flex; gap:2px; overflow-x:auto; flex:1; }
 .q-tab { padding:4px 12px; border-radius:5px; font-size:.75rem; font-weight:700; cursor:pointer; color:var(--muted); transition:all .13s; white-space:nowrap; border:1px solid transparent; }
 .q-tab:hover { color:var(--text); }
 .q-tab.active { background:var(--surface3); color:var(--text); border-color:var(--border); }
@@ -128,47 +180,95 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
     <div class="panel-title">입력</div>
     <div class="panel-body">
 
-      <div class="row2">
-        <div class="field">
-          <label>테이블명</label>
-          <input type="text" id="table-name" placeholder="TB_USER" oninput="onInputChange()" />
+      <!-- Namespace: 맨위 한줄 -->
+      <div class="namespace-bar">
+        <label>Namespace</label>
+        <input type="text" id="namespace" placeholder="com.example.mapper.UserMapper" oninput="onInputChange()" />
+      </div>
+
+      <!-- 베이스 테이블 카드 -->
+      <span class="base-card-lbl">베이스 테이블</span>
+      <div class="base-card">
+        <div class="row3">
+          <div class="field">
+            <label>테이블명</label>
+            <input type="text" id="table-name" placeholder="TB_USER" oninput="onInputChange()" />
+          </div>
+          <div class="field">
+            <label>테이블 별칭 <span style="color:var(--muted);font-weight:400">(선택)</span></label>
+            <input type="text" id="table-alias" placeholder="t" oninput="onInputChange()" />
+          </div>
         </div>
-        <div class="field">
-          <label>Namespace</label>
-          <input type="text" id="namespace" placeholder="com.example.UserMapper" oninput="onInputChange()" />
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
+          <div class="field">
+            <label>컬럼 목록 (줄 구분)</label>
+            <textarea id="columns" rows="9"
+              placeholder="USER_ID&#10;USER_NAME&#10;EMAIL&#10;PHONE_NO&#10;STATUS_CD&#10;REG_DT&#10;UPD_DT"
+              oninput="onInputChange()" style="height:192px"></textarea>
+          </div>
+          <div class="field">
+            <label>주석 (컬럼 순서 일치, 줄 구분)</label>
+            <textarea id="comments" rows="9"
+              placeholder="사용자 ID&#10;사용자 이름&#10;이메일&#10;전화번호&#10;상태 코드&#10;등록일시&#10;수정일시"
+              oninput="onInputChange()" style="height:192px"></textarea>
+          </div>
         </div>
       </div>
 
-      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px">
-        <div class="field">
-          <label>컬럼 목록 (줄 구분)</label>
-          <textarea id="columns" rows="9"
-            placeholder="USER_ID&#10;USER_NAME&#10;EMAIL&#10;PHONE_NO&#10;STATUS_CD&#10;REG_DT&#10;UPD_DT"
-            oninput="onInputChange()" style="height:192px"></textarea>
+      <!-- JOIN 섹션 (베이스 테이블과 시각적으로 구분되는 카드) -->
+      <div>
+        <div class="join-section-hdr">
+          <span class="lbl">JOIN 테이블</span>
+          <button class="btn btn-ghost btn-xs" onclick="addJoin()">+ JOIN 추가</button>
         </div>
-        <div class="field">
-          <label>주석 (컬럼 순서 일치, 줄 구분)</label>
-          <textarea id="comments" rows="9"
-            placeholder="사용자 ID&#10;사용자 이름&#10;이메일&#10;전화번호&#10;상태 코드&#10;등록일시&#10;수정일시"
-            oninput="onInputChange()" style="height:192px"></textarea>
-        </div>
+        <div id="join-list"></div>
       </div>
 
-      <div class="field">
-        <label>PK 컬럼 선택 <span style="color:var(--muted);font-weight:400">(WHERE 기준)</span></label>
-        <div class="pk-chips" id="pk-chips">
-          <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+      <div class="cond-group">
+        <div class="cond-group-title">목록 조회 조건</div>
+
+        <div class="cond-section eq-sec">
+          <label>= 조건 컬럼 <span style="color:var(--green);font-weight:400">(SELECT LIST WHERE = 조건 생성)</span></label>
+          <div class="pk-chips" id="eq-chips">
+            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          </div>
         </div>
-        <p class="pk-hint">클릭으로 PK 토글 · 여러 개 선택 가능</p>
+
+        <div class="cond-section in-sec">
+          <label>IN 조건 컬럼 <span style="color:var(--teal);font-weight:400">(SELECT LIST &lt;foreach&gt; IN 절 생성)</span></label>
+          <div class="pk-chips" id="in-chips">
+            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          </div>
+        </div>
+
+        <div class="cond-section like-sec">
+          <label>LIKE 조건 컬럼 <span style="color:var(--orange);font-weight:400">(SELECT LIST LIKE '%…%' 절 생성)</span></label>
+          <div class="pk-chips" id="like-chips">
+            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          </div>
+        </div>
+
+        <div class="cond-section date-sec">
+          <label>날짜 범위 컬럼 <span style="color:var(--purple);font-weight:400">(SELECT LIST _from / _to 범위 조건 생성)</span></label>
+          <div class="pk-chips" id="date-chips">
+            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="cond-group">
+        <div class="cond-section pk-sec" style="border-radius:8px">
+          <label>PK 컬럼 선택 <span style="color:var(--muted);font-weight:400">(WHERE 기준)</span></label>
+          <div class="pk-chips" id="pk-chips">
+            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          </div>
+        </div>
       </div>
 
       <div class="field">
         <label>옵션</label>
         <div class="option-grid">
-          <div class="opt-row">
-            <input type="checkbox" id="opt-dynamic-select" checked onchange="onInputChange()" />
-            <label for="opt-dynamic-select">SELECT LIST에 동적 &lt;if&gt; 조건 포함</label>
-          </div>
           <div class="opt-row">
             <input type="checkbox" id="opt-dynamic-update" checked onchange="onInputChange()" />
             <label for="opt-dynamic-update">UPDATE에 동적 &lt;set&gt; 사용</label>
@@ -176,10 +276,6 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
           <div class="opt-row">
             <input type="checkbox" id="opt-useGeneratedKeys" onchange="onInputChange()" />
             <label for="opt-useGeneratedKeys">INSERT useGeneratedKeys</label>
-          </div>
-          <div class="opt-row">
-            <input type="checkbox" id="opt-include-pk-insert" checked onchange="onInputChange()" />
-            <label for="opt-include-pk-insert">INSERT에 PK 컬럼 포함</label>
           </div>
           <div class="opt-row">
             <input type="checkbox" id="opt-wrap-mapper" checked onchange="onInputChange()" />
@@ -196,7 +292,8 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
   <!-- RIGHT -->
   <div class="output-panel">
     <div class="output-header">
-      <h3>결과</h3>
+      <span class="output-label">결&nbsp;과</span>
+      <div class="output-divider"></div>
       <div class="q-tabs">
         <div class="q-tab active"       onclick="switchTab('all',this)">전체</div>
         <div class="q-tab"              onclick="switchTab('select-one',this)">SELECT</div>
@@ -268,7 +365,11 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 <div id="toast"></div>
 
 <script>
-let pkCols = new Set();
+let pkCols   = new Set();
+let eqCols   = new Set();   // SELECT LIST WHERE = 조건으로 생성할 컬럼
+let inCols   = new Set();   // IN 조건으로 생성할 컬럼
+let likeCols = new Set();   // LIKE 조건으로 생성할 컬럼
+let dateCols = new Set();   // 날짜 범위(_from/_to) 조건으로 생성할 컬럼
 let generatedSQL = {};
 
 /* ── name converters ── */
@@ -279,14 +380,16 @@ function toPascal(str) {
   const c = toCamel(str);
   return c.charAt(0).toUpperCase() + c.slice(1);
 }
-function param(col) { return '#{p.' + toCamel(col) + '}'; }
+// MyBatis 파라미터용 소문자 snake_case 변환 (USER_ID → user_id)
+function toSnake(col) { return col.trim().toLowerCase(); }
+function param(col) { return '#{p.' + toSnake(col) + '}'; }
 
 function getColumns() {
   return document.getElementById('columns').value
     .split('\n').map(c => c.trim().replace(/,/g, '')).filter(Boolean);
 }
 
-/* 주석 textarea → 컬럼 순서와 1:1 대응하는 배열 (빈 줄은 '' 유지) */
+/* 주석 textarea → 컬럼 순서와 1:1 대응하는 배열 */
 function getComments() {
   const raw = document.getElementById('comments').value.split('\n');
   return raw.map(c => c.trim());
@@ -298,13 +401,183 @@ function buildCmap(cols, cmts) {
   cols.forEach((c, i) => { if (cmts[i]) cmap[c] = cmts[i]; });
   return cmap;
 }
-function getTable()  { return document.getElementById('table-name').value.trim().toUpperCase(); }
+function getTable()     { return document.getElementById('table-name').value.trim().toUpperCase(); }
+function getAlias()     { return document.getElementById('table-alias').value.trim(); }
 function getNamespace() { return document.getElementById('namespace').value.trim(); }
 function getEntityName() {
   const t = document.getElementById('table-name').value.trim();
   if (!t) return 'Entity';
   return t.replace(/^(TBL?_|TB_|T_)/i,'').split('_')
     .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join('');
+}
+
+/* ── 칩 키 헬퍼 ── */
+// prefix 있으면 "PREFIX.COL", 없으면 "COL"
+function colKeyFull(col, prefix) { return prefix ? prefix.toUpperCase() + '.' + col : col; }
+// "T.USER_ID" → "t.user_id",  "USER_ID" → "user_id"
+function keyToSqlRef(key) { return key.toLowerCase(); }
+// "T.USER_ID" → "user_id",  "R.ROLE_ID" → "role_id"
+function keyToParamSnake(key) {
+  const dot = key.lastIndexOf('.');
+  return toSnake(dot === -1 ? key : key.slice(dot + 1));
+}
+// 베이스 + 조인 전체 칩 키 배열 빌드
+function buildAllCondKeys(cols, alias, joins) {
+  const keys = [];
+  cols.forEach(c => keys.push(colKeyFull(c, alias)));
+  joins.forEach(j => {
+    const prefix = j.alias || j.table;
+    j.cols.forEach(c => keys.push(colKeyFull(c, prefix)));
+  });
+  return keys;
+}
+function getAllCondKeys() { return buildAllCondKeys(getColumns(), getAlias(), getJoins()); }
+// JOIN 있을 때 베이스 테이블 prefix: alias 있으면 alias, 없으면 테이블명
+function mainPrefix(alias, table, joins) { return alias || (joins.length > 0 ? table : ''); }
+
+/* ── JOIN 관리 ── */
+function getJoins() {
+  const rows = document.querySelectorAll('.join-card');
+  const joins = [];
+  rows.forEach(row => {
+    const type  = row.querySelector('.join-type').value;
+    const table = row.querySelector('.join-table').value.trim().toUpperCase();
+    const alias = row.querySelector('.join-alias-input').value.trim();
+    const onItems = [...row.querySelectorAll('.on-cond-item')];
+    const on = onItems.map(item => item.dataset.left + ' = ' + item.dataset.right).join(' AND ');
+    const colsRaw = row.querySelector('.join-columns').value
+      .split('\n').map(c => c.trim().replace(/,/g, '')).filter(Boolean);
+    const cmtsRaw = row.querySelector('.join-comments').value.split('\n').map(c => c.trim());
+    const cmap = {};
+    colsRaw.forEach((c, i) => { if (cmtsRaw[i]) cmap[c] = cmtsRaw[i]; });
+    if (table) joins.push({ type, table, alias, on, cols: colsRaw, cmap });
+  });
+  return joins;
+}
+
+function addJoin() {
+  const list  = document.getElementById('join-list');
+  const card  = document.createElement('div');
+  card.className = 'join-card';
+  card.innerHTML = `
+    <div class="join-row-main">
+      <select class="join-type" onchange="onInputChange()">
+        <option>LEFT JOIN</option>
+        <option>INNER JOIN</option>
+        <option>RIGHT JOIN</option>
+      </select>
+      <input type="text" class="join-table" placeholder="TB_ORDER" oninput="onInputChange()" style="flex:1" />
+      <input type="text" class="join-alias-input" placeholder="별칭" oninput="onInputChange()" />
+      <button class="btn-remove" onclick="removeJoin(this)" title="제거">✕</button>
+    </div>
+    <div class="join-cols-grid">
+      <div>
+        <div class="join-sub-lbl">컬럼 목록 (줄 구분)</div>
+        <textarea class="join-columns" placeholder="ORDER_ID&#10;AMOUNT" oninput="onInputChange()" style="height:88px"></textarea>
+      </div>
+      <div>
+        <div class="join-sub-lbl">주석 (컬럼 순서 일치)</div>
+        <textarea class="join-comments" placeholder="주문 ID&#10;금액" oninput="onInputChange()" style="height:88px"></textarea>
+      </div>
+    </div>
+    <div class="on-builder">
+      <div class="join-sub-lbl">ON 조건</div>
+      <div class="on-builder-row">
+        <select class="on-left-sel"></select>
+        <span class="on-eq">=</span>
+        <select class="on-right-sel"></select>
+        <button class="btn btn-ghost btn-xs" onclick="addOnCond(this)" type="button">+ 추가</button>
+      </div>
+      <div class="on-cond-list"></div>
+    </div>
+  `;
+  list.appendChild(card);
+  onInputChange();
+}
+
+function removeJoin(btn) {
+  btn.closest('.join-card').remove();
+  onInputChange();
+}
+
+function addOnCond(btn) {
+  const card     = btn.closest('.join-card');
+  const leftSel  = card.querySelector('.on-left-sel');
+  const rightSel = card.querySelector('.on-right-sel');
+  const leftVal  = leftSel.value;
+  const rightVal = rightSel.value;
+  if (!leftVal || !rightVal) return;
+  const list = card.querySelector('.on-cond-list');
+  const item = document.createElement('div');
+  item.className = 'on-cond-item';
+  item.dataset.left  = leftVal;
+  item.dataset.right = rightVal;
+  item.innerHTML =
+    '<span class="on-cond-text">' + leftVal + ' = ' + rightVal + '</span>' +
+    '<button class="btn-remove" onclick="removeOnCond(this)" title="제거">✕</button>';
+  list.appendChild(item);
+  onInputChange();
+}
+
+function removeOnCond(btn) {
+  btn.closest('.on-cond-item').remove();
+  onInputChange();
+}
+
+function refreshOnSelects() {
+  const baseCols  = getColumns();
+  const baseTable = getTable();
+  const baseAlias = getAlias();
+  const cards     = document.querySelectorAll('.join-card');
+  // Collect light join info from DOM (without calling getJoins to avoid recursion)
+  const joinInfos = [...cards].map(c => ({
+    table: c.querySelector('.join-table').value.trim().toUpperCase(),
+    alias: c.querySelector('.join-alias-input').value.trim(),
+    cols:  c.querySelector('.join-columns').value.split('\n').map(s => s.trim().replace(/,/g,'')).filter(Boolean)
+  }));
+  const basePrefix = baseAlias || (joinInfos.length > 0 ? baseTable : '');
+
+  cards.forEach((card, idx) => {
+    const ji = joinInfos[idx];
+    const joinPrefix = ji.alias || ji.table;
+
+    // LEFT SELECT: this join's columns
+    const leftSel = card.querySelector('.on-left-sel');
+    const leftCur = leftSel.value;
+    leftSel.innerHTML = ji.cols.length
+      ? ji.cols.map(c => {
+          const key = joinPrefix ? joinPrefix + '.' + c : c;
+          return '<option value="' + key + '">' + key + '</option>';
+        }).join('')
+      : '<option value="">-- 컬럼 없음 --</option>';
+    if (leftCur && [...leftSel.options].some(o => o.value === leftCur)) leftSel.value = leftCur;
+
+    // RIGHT SELECT: base table + other joins (optgroups)
+    const rightSel = card.querySelector('.on-right-sel');
+    const rightCur = rightSel.value;
+    let html = '';
+    if (baseCols.length) {
+      const baseLabel = basePrefix || baseTable || '베이스 테이블';
+      html += '<optgroup label="' + baseLabel + '">';
+      baseCols.forEach(c => {
+        const key = basePrefix ? basePrefix + '.' + c : c;
+        html += '<option value="' + key + '">' + key + '</option>';
+      });
+      html += '</optgroup>';
+    }
+    joinInfos.forEach((oji, oidx) => {
+      if (oidx === idx || !oji.cols.length) return;
+      const oPrefix = oji.alias || oji.table;
+      html += '<optgroup label="' + (oPrefix || oji.table) + '">';
+      oji.cols.forEach(c => {
+        const key = oPrefix ? oPrefix + '.' + c : c;
+        html += '<option value="' + key + '">' + key + '</option>';
+      });
+      html += '</optgroup>';
+    });
+    rightSel.innerHTML = html || '<option value="">-- 다른 테이블 없음 --</option>';
+    if (rightCur && [...rightSel.options].some(o => o.value === rightCur)) rightSel.value = rightCur;
+  });
 }
 
 /* ── PK chips ── */
@@ -327,107 +600,278 @@ function togglePk(col) {
   if (getTable()) generate();
 }
 
+/* ── 조건 타입 이름 (툴팁용) ── */
+const COND_LABEL = { eq:'= 조건', in:'IN 조건', like:'LIKE 조건', date:'날짜 범위' };
+
+function condTakenBy(col, exclude) {
+  if (exclude !== 'eq'   && eqCols.has(col))   return COND_LABEL.eq;
+  if (exclude !== 'in'   && inCols.has(col))   return COND_LABEL.in;
+  if (exclude !== 'like' && likeCols.has(col)) return COND_LABEL.like;
+  if (exclude !== 'date' && dateCols.has(col)) return COND_LABEL.date;
+  return null;
+}
+
+function makeChip(c, activeClass, toggleFn, takenBy) {
+  if (takenBy) {
+    return '<div class="pk-chip disabled" title="' + takenBy + '에서 선택됨">' + c + '</div>';
+  }
+  return '<div class="pk-chip' + activeClass + '" onclick="' + toggleFn + '(\'' + c + '\')">' + c + '</div>';
+}
+
+/* ── 조건 칩 통합 렌더러 ── */
+function renderCondChips(wrapId, activeSet, toggleFnName, activeClass, takenExclude) {
+  const wrap     = document.getElementById(wrapId);
+  const joins    = getJoins();
+  const mainCols = getColumns();
+  const mPrefix  = mainPrefix(getAlias(), getTable(), joins);
+
+  const allKeys = buildAllCondKeys(mainCols, mPrefix, joins);
+  if (!allKeys.length) {
+    wrap.innerHTML = '<span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>';
+    return;
+  }
+  [...activeSet].forEach(k => { if (!allKeys.includes(k)) activeSet.delete(k); });
+
+  const hasJoins = joins.some(j => j.cols.length > 0);
+  const mainKeys = mainCols.map(c => colKeyFull(c, mPrefix));
+
+  function chipsHtml(keys) {
+    return keys.map(k =>
+      makeChip(k, activeSet.has(k) ? ' '+activeClass : '', toggleFnName, condTakenBy(k, takenExclude))
+    ).join('');
+  }
+
+  if (!hasJoins) {
+    // JOIN 없음: 레이블 없이 플랫 렌더링
+    wrap.innerHTML = '<div class="chip-row"><div class="chip-row-chips">' + chipsHtml(mainKeys) + '</div></div>';
+    return;
+  }
+
+  // JOIN 있음: 테이블별로 행 분리, 왼쪽에 테이블명/별칭 레이블
+  const baseLabel = (mPrefix || getTable() || 'BASE').toUpperCase();
+  let html = '<div class="chip-row">'
+    + '<span class="chip-row-lbl base-lbl" title="' + baseLabel + '">' + baseLabel + '</span>'
+    + '<div class="chip-row-chips">' + chipsHtml(mainKeys) + '</div>'
+    + '</div>';
+
+  joins.forEach(j => {
+    if (!j.cols.length) return;
+    const prefix = j.alias || j.table;
+    const jLabel = prefix.toUpperCase();
+    const jKeys  = j.cols.map(c => colKeyFull(c, prefix));
+    html += '<div class="chip-row">'
+      + '<span class="chip-row-lbl join-lbl" title="' + jLabel + '">' + jLabel + '</span>'
+      + '<div class="chip-row-chips">' + chipsHtml(jKeys) + '</div>'
+      + '</div>';
+  });
+
+  wrap.innerHTML = html;
+}
+
+function renderAllCondChips() {
+  renderEqChips(); renderInChips(); renderLikeChips(); renderDateChips();
+}
+
+function renderEqChips()   { renderCondChips('eq-chips',   eqCols,   'toggleEq',   'eq-active',   'eq'); }
+function renderInChips()   { renderCondChips('in-chips',   inCols,   'toggleIn',   'in-active',   'in'); }
+function renderLikeChips() { renderCondChips('like-chips', likeCols, 'toggleLike', 'like-active', 'like'); }
+function renderDateChips() { renderCondChips('date-chips', dateCols, 'toggleDate', 'date-active', 'date'); }
+
+function toggleEq(col) {
+  if (condTakenBy(col, 'eq')) return;
+  eqCols.has(col) ? eqCols.delete(col) : eqCols.add(col);
+  renderAllCondChips(); if (getTable()) generate();
+}
+function toggleIn(col) {
+  if (condTakenBy(col, 'in')) return;
+  inCols.has(col) ? inCols.delete(col) : inCols.add(col);
+  renderAllCondChips(); if (getTable()) generate();
+}
+function toggleLike(col) {
+  if (condTakenBy(col, 'like')) return;
+  likeCols.has(col) ? likeCols.delete(col) : likeCols.add(col);
+  renderAllCondChips(); if (getTable()) generate();
+}
+function toggleDate(col) {
+  if (condTakenBy(col, 'date')) return;
+  dateCols.has(col) ? dateCols.delete(col) : dateCols.add(col);
+  renderAllCondChips(); if (getTable()) generate();
+}
+
 function onInputChange() {
+  refreshOnSelects();
   renderPkChips();
+  renderAllCondChips();
   if (getTable() && getColumns().length > 0) generate();
 }
 
 /* ── SQL FORMAT HELPERS ── */
 
-// 오른쪽 정렬 키워드 prefix: 'SELECT'→'SELECT ', 'FROM'→'  FROM ', 'WHERE'→' WHERE '
 function kwPfx(kw, ind) { return ind + kw.padStart(6) + ' '; }
 
-// WHERE / AND pk 블록 (kwWidth: 키워드 컬럼 너비)
-// SELECT → kwWidth=6 (SELECT 끝 맞춤), UPDATE → kwWidth=10 (    UPDATE 끝 맞춤)
-// DELETE → kwWidth=9 (    DELETE 시작 맞춤 = '    WHERE')
-function buildWherePk(pks, ind, kwWidth) {
+// alias 지원: alias 있으면 alias.col 형태로 반환 (컬럼명 소문자)
+function colRef(col, alias) { return alias ? alias + '.' + col.toLowerCase() : col.toLowerCase(); }
+
+function buildWherePk(pks, ind, kwWidth, alias) {
   return pks.map((pk, i) =>
-    ind + (i === 0 ? 'WHERE' : 'AND').padStart(kwWidth) + ' ' + pk + ' = ' + param(pk)
+    ind + (i === 0 ? 'WHERE' : 'AND').padStart(kwWidth) + ' ' + colRef(pk, alias) + ' = ' + param(pk)
   ).join('\n');
 }
 
-// SELECT 컬럼 블록 (콤마 선행 + 인라인 주석 정렬)
-// cols: string[], cmap: {col→comment}, ind: mapper indent
-function selColBlock(cols, cmap, ind) {
-  const hasCmt   = cols.some(c => cmap[c]);
-  const maxLen   = hasCmt ? Math.max(...cols.map(c => c.length)) : 0;
+// SELECT 컬럼 블록 (alias 지원, 단일 테이블용)
+function selColBlock(cols, cmap, ind, alias) {
+  const hasCmt  = cols.some(c => cmap[c]);
+  const refs    = cols.map(c => colRef(c, alias));
+  const maxLen  = hasCmt ? Math.max(...refs.map(r => r.length)) : 0;
   return cols.map((c, i) => {
+    const ref  = refs[i];
     const cmt  = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
-    const name = (hasCmt && cmt) ? c.padEnd(maxLen) : c;
+    const name = (hasCmt && cmt) ? ref.padEnd(maxLen) : ref;
     return (i === 0 ? kwPfx('SELECT', ind) : kwPfx(',', ind)) + name + cmt;
+  }).join('\n');
+}
+
+// SELECT 컬럼 블록 (베이스 + JOIN 통합, 컬럼별 alias 지원)
+function buildSelectBlock(mainCols, mainCmap, mainAlias, joins, ind) {
+  const allCols = [...mainCols];
+  const allCmap = { ...mainCmap };
+  const aliasOf = {};
+  mainCols.forEach(c => { aliasOf[c] = mainAlias; });
+  joins.forEach(j => {
+    j.cols.forEach(c => {
+      allCols.push(c);
+      if (j.cmap[c]) allCmap[c] = j.cmap[c];
+      aliasOf[c] = j.alias || j.table;
+    });
+  });
+  if (!allCols.length) return '';
+  const hasCmt = allCols.some(c => allCmap[c]);
+  const refs   = allCols.map(c => colRef(c, aliasOf[c]));
+  const maxLen = hasCmt ? Math.max(...refs.map(r => r.length)) : 0;
+  return allCols.map((c, i) => {
+    const ref  = refs[i];
+    const cmt  = allCmap[c] ? '  /* ' + allCmap[c] + ' */' : '';
+    const name = (hasCmt && cmt) ? ref.padEnd(maxLen) : ref;
+    return (i === 0 ? kwPfx('SELECT', ind) : kwPfx(',', ind)) + name + cmt;
+  }).join('\n');
+}
+
+// JOIN 절 블록 생성
+// - LEFT/RIGHT/INNER 오른쪽 끝을 FROM 오른쪽 끝(padStart 6)에 맞춤
+// - ON 은 다음줄에 LEFT/RIGHT/INNER 오른쪽 끝과 동일 열 위치(padStart 6)
+// - AND 는 ON 오른쪽 끝과 동일 열 위치(padStart 6)
+function buildJoinBlock(joins, sqlInd) {
+  if (!joins.length) return null;
+  return joins.map(j => {
+    // j.type = "LEFT JOIN" | "INNER JOIN" | "RIGHT JOIN"
+    const keyword = j.type.split(' ')[0];          // LEFT / INNER / RIGHT
+    const jtable  = j.alias ? j.table + ' ' + j.alias : j.table;
+    const lines   = [sqlInd + keyword.padStart(6) + ' JOIN ' + jtable];
+
+    if (j.on) {
+      // AND 로 분리하여 ON + AND 각각 padStart(6) 정렬
+      const conds = j.on.split(/\s+AND\s+/i).map(c => c.trim()).filter(Boolean);
+      conds.forEach((cond, i) => {
+        const kw = i === 0 ? 'ON' : 'AND';
+        lines.push(sqlInd + kw.padStart(6) + ' ' + cond);
+      });
+    }
+    return lines.join('\n');
   }).join('\n');
 }
 
 /* ── GENERATE ── */
 function generate() {
   const table  = getTable();
+  const alias  = getAlias();
   const cols   = getColumns();
   const ns     = getNamespace();
   const entity = getEntityName();
+  const joins  = getJoins();
   if (!table || !cols.length) { toast('⚠️ 테이블명과 컬럼을 입력하세요'); return; }
 
   const pks       = pkCols.size > 0 ? [...pkCols] : [cols[0]];
   const nonPkCols = cols.filter(c => !pks.includes(c));
 
-  const dynSel  = document.getElementById('opt-dynamic-select').checked;
   const dynUpd  = document.getElementById('opt-dynamic-update').checked;
   const useGK   = document.getElementById('opt-useGeneratedKeys').checked;
-  const inclPK  = document.getElementById('opt-include-pk-insert').checked;
   const wrapMp  = document.getElementById('opt-wrap-mapper').checked;
   const ind     = wrapMp ? '    ' : '';
 
   /* 주석 매핑 */
-  const cmap       = buildCmap(cols, getComments());
-  const hasCmt     = Object.keys(cmap).length > 0;
-  const maxColLen  = hasCmt ? Math.max(...cols.map(c => c.length)) : 0;
+  const cmap      = buildCmap(cols, getComments());
+  const hasCmt    = Object.keys(cmap).length > 0;
+  const maxColLen = hasCmt ? Math.max(...cols.map(c => c.length)) : 0;
 
-  // SELECT 내부 SQL은 <select> 태그 기준으로 4칸 추가 들여쓰기
-  const sqlInd = ind + '    ';
+  const sqlInd    = ind + '    ';
+  const fromTable = alias ? table + ' ' + alias : table;
+  const joinBlock = buildJoinBlock(joins, sqlInd);
+  // JOIN 있고 베이스 alias 없으면 테이블명을 prefix로 사용
+  const mPfx      = mainPrefix(alias, table, joins);
 
-  /* SELECT ONE ― 내부 SQL은 sqlInd 기준 */
+  /* SELECT ONE */
   const qSelectOne = [
     ind+'<select id="select'+entity+'" parameterType="Map" resultType="Map">',
-    selColBlock(cols, cmap, sqlInd),
-    kwPfx('FROM', sqlInd) + table,
-    buildWherePk(pks, sqlInd, 6),
+    buildSelectBlock(cols, cmap, mPfx, joins, sqlInd),
+    kwPfx('FROM', sqlInd) + fromTable,
+    ...(joinBlock ? [joinBlock] : []),
+    buildWherePk(pks, sqlInd, 6, alias),
     ind+'</select>'
   ].join('\n');
 
-  /* SELECT LIST ― 내부 SQL은 sqlInd 기준 */
-  let qSelectList;
-  if (dynSel) {
-    const ifConds = cols.map(c =>
-      sqlInd+'    <if test="p.'+toCamel(c)+' != null and p.'+toCamel(c)+' != \'\'">\n'+
-      sqlInd+'        AND '+c+' = '+param(c)+'\n'+
-      sqlInd+'    </if>'
-    ).join('\n');
-    qSelectList = [
-      ind+'<select id="select'+entity+'List" parameterType="Map" resultType="Map">',
-      selColBlock(cols, cmap, sqlInd),
-      kwPfx('FROM', sqlInd) + table,
-      sqlInd+'<where>',
-      ifConds,
-      sqlInd+'</where>',
-      ind+'</select>'
-    ].join('\n');
-  } else {
-    qSelectList = [
-      ind+'<select id="select'+entity+'List" parameterType="Map" resultType="Map">',
-      selColBlock(cols, cmap, sqlInd),
-      kwPfx('FROM', sqlInd) + table,
-      buildWherePk(pks, sqlInd, 6),
-      ind+'</select>'
-    ].join('\n');
-  }
+  /* SELECT LIST — 베이스 + JOIN 컬럼 모두 조건 대상 */
+  const allCondKeys = buildAllCondKeys(cols, mPfx, joins);
+  const ifConds = allCondKeys.map(key => {
+    const sqlRef = keyToSqlRef(key);
+    const snake  = keyToParamSnake(key);
+    if (inCols.has(key)) {
+      return sqlInd+'    <if test="p.'+snake+' != null and p.'+snake+'.size() > 0">\n'+
+             sqlInd+'        AND '+sqlRef+' IN\n'+
+             sqlInd+'        <foreach item="'+snake+'" collection="p.'+snake+'" open="(" separator="," close=")">\n'+
+             sqlInd+'            #{'+snake+'}\n'+
+             sqlInd+'        </foreach>\n'+
+             sqlInd+'    </if>';
+    }
+    if (likeCols.has(key)) {
+      return sqlInd+'    <if test=\'p.'+snake+' != null and p.'+snake+' != ""\'>\n'+
+             sqlInd+'        AND '+sqlRef+' LIKE \'%\' || #{p.'+snake+'} || \'%\'\n'+
+             sqlInd+'    </if>';
+    }
+    if (dateCols.has(key)) {
+      return sqlInd+'    <if test="p.'+snake+'_from != null and p.'+snake+'_from != \'\'">\n'+
+             sqlInd+'        AND '+sqlRef+' >= #{p.'+snake+'_from}\n'+
+             sqlInd+'    </if>\n'+
+             sqlInd+'    <if test="p.'+snake+'_to != null and p.'+snake+'_to != \'\'">\n'+
+             sqlInd+'        AND '+sqlRef+' &lt;= #{p.'+snake+'_to}\n'+
+             sqlInd+'    </if>';
+    }
+    if (eqCols.has(key)) {
+      return sqlInd+'    <if test="p.'+snake+' != null and p.'+snake+' != \'\'">\n'+
+             sqlInd+'        AND '+sqlRef+' = #{p.'+snake+'}\n'+
+             sqlInd+'    </if>';
+    }
+    return null;
+  }).filter(Boolean).join('\n');
+  const qSelectList = [
+    ind+'<select id="select'+entity+'List" parameterType="Map" resultType="Map">',
+    buildSelectBlock(cols, cmap, mPfx, joins, sqlInd),
+    kwPfx('FROM', sqlInd) + fromTable,
+    ...(joinBlock ? [joinBlock] : []),
+    sqlInd+'<where>',
+    ifConds,
+    sqlInd+'</where>',
+    ind+'</select>'
+  ].join('\n');
 
-  /* INSERT — 컬럼명 정렬 후 인라인 주석 */
-  const insCols = (inclPK ? cols : nonPkCols);
-  const gkAttr  = useGK ? ' useGeneratedKeys="true" keyProperty="'+toCamel(pks[0])+'"' : '';
+  /* INSERT — alias 미적용 (INSERT INTO 에는 별칭 불필요) */
+  const insCols   = cols;
+  const gkAttr    = useGK ? ' useGeneratedKeys="true" keyProperty="'+toSnake(pks[0])+'"' : '';
   const insMaxLen = hasCmt ? Math.max(...insCols.map(c => c.length)) : 0;
   const insColStr = insCols.map((c, i) => {
     const comma  = i < insCols.length - 1 ? ',' : ' ';
     const cmt    = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
-    const colPad = (hasCmt && cmt) ? (c + comma).padEnd(insMaxLen + 2) : c + comma;
+    const cLow   = c.toLowerCase();
+    const colPad = (hasCmt && cmt) ? (cLow + comma).padEnd(insMaxLen + 2) : cLow + comma;
     return ind + '        ' + colPad + cmt;
   }).join('\n');
   const insValStr = insCols.map((c, i) =>
@@ -443,19 +887,18 @@ function generate() {
     ind+'</insert>'
   ].join('\n');
 
-  /* UPDATE — SET 절에 인라인 주석 */
+  /* UPDATE — alias 미적용 */
   const updMaxLen = Math.max(...nonPkCols.map(c => c.length));
   let qUpdate;
   if (dynUpd) {
-    // max length of full "COL = #{p.val}," expression for comment alignment
     const dynMaxExpr = hasCmt ? Math.max(...nonPkCols.map(c =>
       (c.padEnd(updMaxLen) + ' = ' + param(c) + ',').length
     )) : 0;
     const setConds = nonPkCols.map(c => {
       const cmt  = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
-      const expr = c.padEnd(updMaxLen) + ' = ' + param(c) + ',';
+      const expr = c.toLowerCase().padEnd(updMaxLen) + ' = ' + param(c) + ',';
       const line = cmt ? expr.padEnd(dynMaxExpr) + cmt : expr;
-      return ind+'        <if test="p.'+toCamel(c)+' != null">\n'+
+      return ind+'        <if test="p.'+toSnake(c)+' != null">\n'+
              ind+'                '+line+'\n'+
              ind+'        </if>';
     }).join('\n');
@@ -469,14 +912,13 @@ function generate() {
       ind+'</update>'
     ].join('\n');
   } else {
-    // max length of full "COL = #{p.val}," expression for comment alignment
     const statMaxExpr = hasCmt ? Math.max(...nonPkCols.map((c, i) =>
       (c.padEnd(updMaxLen) + ' = ' + param(c) + (i < nonPkCols.length - 1 ? ',' : '')).length
     )) : 0;
     const setStat = nonPkCols.map((c, i) => {
       const comma = i < nonPkCols.length - 1 ? ',' : '';
       const cmt   = cmap[c] ? '  /* ' + cmap[c] + ' */' : '';
-      const expr  = c.padEnd(updMaxLen) + ' = ' + param(c) + comma;
+      const expr  = c.toLowerCase().padEnd(updMaxLen) + ' = ' + param(c) + comma;
       const line  = cmt ? expr.padEnd(statMaxExpr) + cmt : expr;
       return ind + '        ' + line;
     }).join('\n');
@@ -489,7 +931,7 @@ function generate() {
     ].join('\n');
   }
 
-  /* DELETE ― WHERE를 '    DELETE' 시작에 맞춰 정렬 (kwWidth=9 → '    WHERE') */
+  /* DELETE — alias 미적용 */
   const qDelete = [
     ind+'<delete id="delete'+entity+'" parameterType="Map">',
     ind+'    DELETE FROM '+table,
@@ -561,19 +1003,14 @@ const SQL_KW = ['SELECT','FROM','WHERE','AND','OR','NOT','IN','BETWEEN','LIKE','
 
 function highlight(code) {
   let s = esc(code);
-  // XML comments
   s = s.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="xc">$1</span>');
-  // MyBatis params
   s = s.replace(/(#\{[^}]+\})/g, '<span class="sp">$1</span>');
-  // if test attr value
   s = s.replace(/(test=&quot;)([^&"]+)(&quot;)/g, '$1<span class="si">$2</span>$3');
-  // XML tags
   s = s.replace(/(&lt;\/?)([\w:-]+)([^&<>]*?)(\/?)(&gt;)/g, (m, open, tag, attrs, sc, close) => {
     const ah = attrs.replace(/([\w:-]+)(\s*=\s*)(&quot;[^&]*&quot;)/g,
       '<span class="xa">$1</span>$2<span class="xv">$3</span>');
     return '<span class="xb">'+open+'</span><span class="xt">'+tag+'</span>'+ah+'<span class="xb">'+sc+close+'</span>';
   });
-  // SQL keywords
   SQL_KW.forEach(kw => {
     s = s.replace(new RegExp('(?<![\\w<])\\b('+kw+')\\b(?![^<]*>)','g'),
       '<span class="sk">$1</span>');
@@ -605,12 +1042,40 @@ function copyAll() {
 
 /* ── SAMPLE ── */
 function loadSample() {
-  document.getElementById('table-name').value = 'TB_USER';
-  document.getElementById('namespace').value = 'com.example.mapper.UserMapper';
-  document.getElementById('columns').value  = 'USER_ID\nUSER_NAME\nEMAIL\nPHONE_NO\nSTATUS_CD\nREG_DT\nUPD_DT';
-  document.getElementById('comments').value = '사용자 ID\n사용자 이름\n이메일\n전화번호\n상태 코드\n등록일시\n수정일시';
-  pkCols = new Set(['USER_ID']);
+  document.getElementById('table-name').value  = 'TB_USER';
+  document.getElementById('table-alias').value = 't';
+  document.getElementById('namespace').value   = 'com.example.mapper.UserMapper';
+  document.getElementById('columns').value     = 'USER_ID\nUSER_NAME\nEMAIL\nPHONE_NO\nSTATUS_CD\nREG_DT\nUPD_DT';
+  document.getElementById('comments').value    = '사용자 ID\n사용자 이름\n이메일\n전화번호\n상태 코드\n등록일시\n수정일시';
+  // JOIN 샘플 추가 (새 카드 형식)
+  document.getElementById('join-list').innerHTML = '';
+  addJoin();
+  const card = document.querySelector('.join-card');
+  if (card) {
+    card.querySelector('.join-table').value       = 'TB_USER_ROLE';
+    card.querySelector('.join-alias-input').value = 'r';
+    card.querySelector('.join-columns').value     = 'USER_ID\nROLE_CD\nROLE_NM';
+    card.querySelector('.join-comments').value    = '사용자 ID\n역할 코드\n역할명';
+    refreshOnSelects(); // 컬럼 설정 후 select 갱신
+    // ON 조건 직접 추가
+    const onList = card.querySelector('.on-cond-list');
+    const onItem = document.createElement('div');
+    onItem.className = 'on-cond-item';
+    onItem.dataset.left  = 'r.USER_ID';
+    onItem.dataset.right = 't.USER_ID';
+    onItem.innerHTML =
+      '<span class="on-cond-text">r.USER_ID = t.USER_ID</span>' +
+      '<button class="btn-remove" onclick="removeOnCond(this)" title="제거">✕</button>';
+    onList.appendChild(onItem);
+  }
+  // 베이스 테이블 alias "t" 기준 키
+  pkCols   = new Set(['USER_ID']);
+  eqCols   = new Set(['T.EMAIL', 'T.PHONE_NO']);
+  inCols   = new Set(['T.STATUS_CD']);
+  likeCols = new Set(['T.USER_NAME']);
+  dateCols = new Set(['T.REG_DT']);
   renderPkChips();
+  renderAllCondChips();
   generate();
 }
 
