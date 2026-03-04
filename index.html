@@ -732,25 +732,22 @@ function selColBlock(cols, cmap, ind, alias) {
 }
 
 // SELECT 컬럼 블록 (베이스 + JOIN 통합, 컬럼별 alias 지원)
+// 컬럼명이 같은 경우에도 각 테이블의 별칭이 올바르게 적용되도록
+// 컬럼명 키 대신 인덱스 기반 entries 배열로 관리
 function buildSelectBlock(mainCols, mainCmap, mainAlias, joins, ind) {
-  const allCols = [...mainCols];
-  const allCmap = { ...mainCmap };
-  const aliasOf = {};
-  mainCols.forEach(c => { aliasOf[c] = mainAlias; });
+  const entries = [];
+  mainCols.forEach(c => entries.push({ col: c, alias: mainAlias, cmt: mainCmap[c] || '' }));
   joins.forEach(j => {
-    j.cols.forEach(c => {
-      allCols.push(c);
-      if (j.cmap[c]) allCmap[c] = j.cmap[c];
-      aliasOf[c] = j.alias || j.table;
-    });
+    const jAlias = j.alias || j.table;
+    j.cols.forEach(c => entries.push({ col: c, alias: jAlias, cmt: j.cmap[c] || '' }));
   });
-  if (!allCols.length) return '';
-  const hasCmt = allCols.some(c => allCmap[c]);
-  const refs   = allCols.map(c => colRef(c, aliasOf[c]));
+  if (!entries.length) return '';
+  const hasCmt = entries.some(e => e.cmt);
+  const refs   = entries.map(e => colRef(e.col, e.alias));
   const maxLen = hasCmt ? Math.max(...refs.map(r => r.length)) : 0;
-  return allCols.map((c, i) => {
+  return entries.map((e, i) => {
     const ref  = refs[i];
-    const cmt  = allCmap[c] ? '  /* ' + allCmap[c] + ' */' : '';
+    const cmt  = e.cmt ? '  /* ' + e.cmt + ' */' : '';
     const name = (hasCmt && cmt) ? ref.padEnd(maxLen) : ref;
     return (i === 0 ? kwPfx('SELECT', ind) : kwPfx(',', ind)) + name + cmt;
   }).join('\n');
