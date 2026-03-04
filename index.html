@@ -16,6 +16,15 @@
   --xml-cmt:#636e7b; --sql-kw:#f47067; --sql-param:#57ab5a;
   --radius:8px;
 }
+[data-theme="light"] {
+  --bg:#ffffff; --surface:#f8f9fb; --surface2:#f1f4f7; --surface3:#ffffff;
+  --border:#cdd3da; --text:#1f2328; --muted:#636d79;
+  --primary:#0969da; --primary-h:#0550ae;
+  --green:#1a7f37; --yellow:#9a6700; --orange:#953800;
+  --purple:#6639ba; --red:#cf222e; --cyan:#0969da; --teal:#116329;
+  --xml-tag:#cf222e; --xml-attr:#0969da; --xml-val:#0550ae;
+  --xml-cmt:#57606a; --sql-kw:#cf222e; --sql-param:#1a7f37;
+}
 body { font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
 
 /* HEADER */
@@ -157,6 +166,10 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:3px; }
 
+/* THEME TOGGLE */
+.btn-theme { background:var(--surface2); color:var(--text); border:1px solid var(--border); width:32px; padding:0; height:28px; font-size:1rem; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer; transition:all .15s; flex-shrink:0; }
+.btn-theme:hover { background:var(--surface3); }
+
 @media (max-width:700px) {
   .layout { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
   .panel { border-right:none; border-bottom:1px solid var(--border); max-height:50vh; }
@@ -170,6 +183,7 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
   <div class="hdr-actions">
     <button class="btn btn-ghost btn-xs" onclick="loadSample()">샘플 불러오기</button>
     <button class="btn btn-copy-all btn-xs" onclick="copyAll()">전체 복사</button>
+    <button class="btn btn-theme" id="theme-btn" onclick="toggleTheme()" title="테마 전환">🌙</button>
   </div>
 </header>
 
@@ -1085,6 +1099,27 @@ function toast(msg) {
   clearTimeout(toastT);
   toastT = setTimeout(() => el.classList.remove('show'), 2000);
 }
+
+/* ── THEME ── */
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+  const next = isDark ? 'light' : 'dark';
+  applyTheme(next);
+  localStorage.setItem('theme', next);
+}
+function applyTheme(t) {
+  if (t === 'light') {
+    document.documentElement.setAttribute('data-theme', 'light');
+    document.getElementById('theme-btn').textContent = '☀️';
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+    document.getElementById('theme-btn').textContent = '🌙';
+  }
+}
+(function() {
+  const saved = localStorage.getItem('theme');
+  if (saved) applyTheme(saved);
+})();
 
 /* ── KEYBOARD ── */
 document.addEventListener('keydown', e => {
