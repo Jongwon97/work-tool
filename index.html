@@ -38,9 +38,12 @@ header h1 { font-size:1.25rem; font-weight:700; }
 .layout { display:grid; grid-template-columns:500px 1fr; flex:1; overflow:hidden; }
 
 /* PANEL */
+.left-side { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); }
 .panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); background:var(--surface2); }
 .panel-title { padding:9px 14px; font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; display:flex; align-items:center; justify-content:space-between; }
-.panel-body { flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:14px; }
+.panel-body { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:22px; }
+.cond-outer { background:var(--surface2); border-top:2px solid var(--border); overflow-y:auto; max-height:260px; flex-shrink:0; }
+.cond-outer-body { padding:12px 14px; display:flex; flex-direction:column; }
 
 /* NAMESPACE BAR */
 .namespace-bar { background:var(--surface); border:1px solid var(--border); border-radius:6px; padding:8px 12px; display:flex; align-items:center; gap:8px; }
@@ -59,12 +62,15 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 .row3 { display:grid; grid-template-columns:2fr 1fr; gap:10px; }
 
 /* PK / IN / LIKE CHIPS */
-.pk-chips { display:flex; flex-direction:column; gap:4px; min-height:32px; }
-.chip-row { display:flex; align-items:flex-start; gap:6px; }
-.chip-row-lbl { font-size:.63rem; font-weight:700; align-self:flex-start; margin-top:2px; padding:2px 6px; border-radius:3px; white-space:nowrap; max-width:80px; overflow:hidden; text-overflow:ellipsis; flex-shrink:0; }
+.pk-chips { display:flex; flex-direction:row; flex-wrap:wrap; gap:6px; min-height:32px; }
+.chip-row { display:flex; flex-direction:column; gap:4px; }
+.chip-row-header { display:flex; align-items:center; gap:6px; }
+.chip-row-lbl { font-size:.63rem; font-weight:700; padding:2px 6px; border-radius:3px; white-space:nowrap; flex-shrink:0; }
 .chip-row-lbl.base-lbl { color:var(--text); background:var(--surface3); border:1px solid var(--border); }
 .chip-row-lbl.join-lbl { color:var(--yellow); background:rgba(227,179,65,.1); border:1px solid rgba(227,179,65,.25); }
-.chip-row-chips { display:flex; flex-wrap:wrap; gap:5px; flex:1; }
+.chip-filter { flex:1; font-size:.72rem; padding:2px 7px; border:1px solid var(--border); border-radius:4px; background:var(--surface); color:var(--fg); outline:none; min-width:0; }
+.chip-filter:focus { border-color:var(--primary); }
+.chip-row-chips { display:flex; flex-wrap:wrap; gap:5px; }
 .pk-chip { padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--muted); transition:all .13s; user-select:none; }
 .pk-chip.active       { background:rgba(52,109,202,.2);   border-color:var(--primary-h); color:var(--primary-h); }
 .pk-chip.eq-active    { background:rgba(87,171,90,.15);   border-color:var(--green);     color:var(--green); }
@@ -72,6 +78,10 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 .pk-chip.like-active  { background:rgba(204,120,50,.15);  border-color:var(--orange);    color:var(--orange); }
 .pk-chip.date-active  { background:rgba(179,146,240,.15); border-color:var(--purple);    color:var(--purple); }
 .pk-chip.disabled     { opacity:0.28; cursor:not-allowed; filter:grayscale(1); pointer-events:none; }
+.pk-chip { display:inline-flex; align-items:center; gap:4px; }
+.chip-remove { cursor:pointer; font-size:.6rem; opacity:.5; line-height:1; padding:0 1px; flex-shrink:0; }
+.chip-remove:hover { opacity:1; color:#e06060; }
+.cond-combo { margin-bottom:5px; flex:none; width:50%; }
 .pk-hint { font-size:.7rem; color:var(--muted); margin-top:4px; }
 
 /* 조건 컬럼 그룹 */
@@ -102,8 +112,16 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 /* ON BUILDER */
 .on-builder { display:flex; flex-direction:column; gap:5px; }
 .on-builder-row { display:flex; gap:5px; align-items:center; }
-.on-builder-row select { flex:1; min-width:0; font-size:.78rem; }
 .on-eq { color:var(--muted); font-size:.85rem; font-weight:700; flex-shrink:0; padding:0 3px; }
+.on-combo { position:relative; flex:1; min-width:0; }
+.on-combo-input { width:100%; box-sizing:border-box; font-size:.78rem; padding:3px 6px; border:1px solid var(--border); border-radius:4px; background:var(--surface); color:var(--fg); outline:none; }
+.on-combo-input:focus { border-color:var(--primary); }
+.on-combo-drop { position:absolute; top:calc(100% + 2px); left:0; right:0; background:var(--surface); border:1px solid var(--border); border-radius:4px; max-height:180px; overflow-y:auto; z-index:200; display:none; box-shadow:0 4px 12px rgba(0,0,0,.35); }
+.on-combo-drop.open { display:block; }
+.on-combo-drop .copt-group { padding:4px 8px; font-size:.67rem; font-weight:700; color:var(--text); text-transform:uppercase; background:var(--primary); opacity:0.85; position:sticky; top:0; border-bottom:1px solid var(--border); }
+.on-combo-drop .copt { padding:4px 10px; font-size:.9rem; cursor:pointer; color:var(--fg); }
+.on-combo-drop .copt:hover { background:var(--primary); color:#fff; }
+.on-combo-drop .copt.hidden { display:none; }
 .on-cond-list { display:flex; flex-direction:column; gap:3px; }
 .on-cond-item { display:flex; align-items:center; gap:6px; background:var(--surface3); border:1px solid var(--border); border-radius:4px; padding:3px 8px; }
 .on-cond-text { flex:1; font-family:'Consolas','Fira Code',monospace; font-size:.75rem; color:var(--cyan); }
@@ -201,6 +219,7 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
       </div>
 
       <!-- 베이스 테이블 카드 -->
+      <div style="display:flex;flex-direction:column;gap:6px">
       <span class="base-card-lbl">베이스 테이블</span>
       <div class="base-card">
         <div class="row3">
@@ -228,6 +247,7 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
           </div>
         </div>
       </div>
+      </div>
 
       <!-- JOIN 섹션 (베이스 테이블과 시각적으로 구분되는 카드) -->
       <div>
@@ -238,46 +258,66 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
         <div id="join-list"></div>
       </div>
 
+      <div style="display:flex;flex-direction:column;gap:6px">
+      <span class="base-card-lbl">SELECT LIST 조건</span>
       <div class="cond-group">
-        <div class="cond-group-title">목록 조회 조건</div>
 
         <div class="cond-section eq-sec">
           <label>= 조건 컬럼 <span style="color:var(--green);font-weight:400">(SELECT LIST WHERE = 조건 생성)</span></label>
-          <div class="pk-chips" id="eq-chips">
-            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          <div class="cond-combo on-combo">
+            <input class="on-combo-input" id="eq-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="eq" autocomplete="off"
+              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+            <div class="on-combo-drop"></div>
           </div>
+          <div class="pk-chips" id="eq-chips"></div>
         </div>
 
         <div class="cond-section in-sec">
           <label>IN 조건 컬럼 <span style="color:var(--teal);font-weight:400">(SELECT LIST &lt;foreach&gt; IN 절 생성)</span></label>
-          <div class="pk-chips" id="in-chips">
-            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          <div class="cond-combo on-combo">
+            <input class="on-combo-input" id="in-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="in" autocomplete="off"
+              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+            <div class="on-combo-drop"></div>
           </div>
+          <div class="pk-chips" id="in-chips"></div>
         </div>
 
         <div class="cond-section like-sec">
           <label>LIKE 조건 컬럼 <span style="color:var(--orange);font-weight:400">(SELECT LIST LIKE '%…%' 절 생성)</span></label>
-          <div class="pk-chips" id="like-chips">
-            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          <div class="cond-combo on-combo">
+            <input class="on-combo-input" id="like-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="like" autocomplete="off"
+              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+            <div class="on-combo-drop"></div>
           </div>
+          <div class="pk-chips" id="like-chips"></div>
         </div>
 
         <div class="cond-section date-sec">
           <label>날짜 범위 컬럼 <span style="color:var(--purple);font-weight:400">(SELECT LIST _from / _to 범위 조건 생성)</span></label>
-          <div class="pk-chips" id="date-chips">
-            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          <div class="cond-combo on-combo">
+            <input class="on-combo-input" id="date-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="date" autocomplete="off"
+              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+            <div class="on-combo-drop"></div>
           </div>
+          <div class="pk-chips" id="date-chips"></div>
         </div>
 
       </div>
+      </div>
 
+      <div style="display:flex;flex-direction:column;gap:6px">
+      <span class="base-card-lbl">단건 조회 / UPDATE / DELETE 조건</span>
       <div class="cond-group">
         <div class="cond-section pk-sec" style="border-radius:8px">
           <label>PK 컬럼 선택 <span style="color:var(--muted);font-weight:400">(WHERE 기준)</span></label>
-          <div class="pk-chips" id="pk-chips">
-            <span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>
+          <div class="cond-combo on-combo">
+            <input class="on-combo-input" id="pk-combo" type="text" placeholder="컬럼 검색 후 선택..." autocomplete="off"
+              oninput="filterPkCombo(this)" onfocus="openPkCombo(this)" onblur="closeOnComboDelay(this)">
+            <div class="on-combo-drop"></div>
           </div>
+          <div class="pk-chips" id="pk-chips"></div>
         </div>
+      </div>
       </div>
 
       <div class="field">
@@ -426,8 +466,8 @@ function getEntityName() {
 }
 
 /* ── 칩 키 헬퍼 ── */
-// prefix 있으면 "PREFIX.COL", 없으면 "COL"
-function colKeyFull(col, prefix) { return prefix ? prefix.toUpperCase() + '.' + col : col; }
+// prefix 있으면 "prefix.col", 없으면 "col" (소문자 통일)
+function colKeyFull(col, prefix) { return prefix ? prefix.toLowerCase() + '.' + col.toLowerCase() : col.toLowerCase(); }
 // "T.USER_ID" → "t.user_id",  "USER_ID" → "user_id"
 function keyToSqlRef(key) { return key.toLowerCase(); }
 // "T.USER_ID" → "user_id",  "R.ROLE_ID" → "role_id"
@@ -497,9 +537,17 @@ function addJoin() {
     <div class="on-builder">
       <div class="join-sub-lbl">ON 조건</div>
       <div class="on-builder-row">
-        <select class="on-left-sel"></select>
+        <div class="on-combo">
+          <input class="on-left-sel on-combo-input" type="text" placeholder="LEFT 컬럼 검색..." autocomplete="off"
+            oninput="filterOnCombo(this)" onfocus="openOnCombo(this)" onblur="closeOnComboDelay(this)">
+          <div class="on-combo-drop"></div>
+        </div>
         <span class="on-eq">=</span>
-        <select class="on-right-sel"></select>
+        <div class="on-combo">
+          <input class="on-right-sel on-combo-input" type="text" placeholder="RIGHT 컬럼 검색..." autocomplete="off"
+            oninput="filterOnCombo(this)" onfocus="openOnCombo(this)" onblur="closeOnComboDelay(this)">
+          <div class="on-combo-drop"></div>
+        </div>
         <button class="btn btn-ghost btn-xs" onclick="addOnCond(this)" type="button">+ 추가</button>
       </div>
       <div class="on-cond-list"></div>
@@ -518,8 +566,8 @@ function addOnCond(btn) {
   const card     = btn.closest('.join-card');
   const leftSel  = card.querySelector('.on-left-sel');
   const rightSel = card.querySelector('.on-right-sel');
-  const leftVal  = leftSel.value;
-  const rightVal = rightSel.value;
+  const leftVal  = leftSel.dataset.selectedValue || '';
+  const rightVal = rightSel.dataset.selectedValue || '';
   if (!leftVal || !rightVal) return;
   const list = card.querySelector('.on-cond-list');
   const item = document.createElement('div');
@@ -530,12 +578,79 @@ function addOnCond(btn) {
     '<span class="on-cond-text">' + leftVal + ' = ' + rightVal + '</span>' +
     '<button class="btn-remove" onclick="removeOnCond(this)" title="제거">✕</button>';
   list.appendChild(item);
+  leftSel.value = ''; delete leftSel.dataset.selectedValue;
+  rightSel.value = ''; delete rightSel.dataset.selectedValue;
   onInputChange();
 }
 
 function removeOnCond(btn) {
   btn.closest('.on-cond-item').remove();
   onInputChange();
+}
+
+/* ── ON 콤보박스 ── */
+function openOnCombo(input) {
+  const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+  drop.classList.add('open');
+  filterOnCombo(input);
+}
+function closeOnComboDelay(input) {
+  setTimeout(() => {
+    input.closest('.on-combo').querySelector('.on-combo-drop').classList.remove('open');
+  }, 200);
+}
+function filterOnCombo(input) {
+  const q = input.value.toLowerCase();
+  if (input.dataset.selectedValue && input.value !== input.dataset.selectedValue) {
+    delete input.dataset.selectedValue;
+  }
+  const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+  drop.querySelectorAll('.copt').forEach(opt => {
+    opt.classList.toggle('hidden', !!q && !opt.dataset.value.includes(q));
+  });
+}
+function selectOnCombo(el, value) {
+  const combo = el.closest('.on-combo');
+  const input = combo.querySelector('.on-combo-input');
+  const dot = value.indexOf('.');
+  input.value = dot === -1 ? value : value.slice(dot + 1);
+  input.dataset.selectedValue = value;
+  combo.querySelector('.on-combo-drop').classList.remove('open');
+}
+
+function updateOnConds(oldPrefix, newPrefix) {
+  if (!oldPrefix || oldPrefix === newPrefix) return;
+  const oldDot = oldPrefix.toUpperCase() + '.';
+  document.querySelectorAll('.on-cond-item').forEach(item => {
+    let left  = item.dataset.left  || '';
+    let right = item.dataset.right || '';
+    let changed = false;
+    if (left.toUpperCase().startsWith(oldDot)) {
+      left  = newPrefix + left.slice(oldPrefix.length);
+      changed = true;
+    }
+    if (right.toUpperCase().startsWith(oldDot)) {
+      right = newPrefix + right.slice(oldPrefix.length);
+      changed = true;
+    }
+    if (changed) {
+      item.dataset.left  = left;
+      item.dataset.right = right;
+      item.querySelector('.on-cond-text').textContent = left + ' = ' + right;
+    }
+  });
+  // 콤보 input selectedValue도 갱신
+  document.querySelectorAll('.on-combo-input').forEach(input => {
+    const sv = input.dataset.selectedValue || '';
+    if (!sv) return;
+    const svUpper = sv.toUpperCase();
+    if (svUpper.startsWith(oldDot)) {
+      const updated = newPrefix + sv.slice(oldPrefix.length);
+      const d = updated.indexOf('.');
+      input.value = d === -1 ? updated : updated.slice(d + 1);
+      input.dataset.selectedValue = updated;
+    }
+  });
 }
 
 function refreshOnSelects() {
@@ -551,46 +666,69 @@ function refreshOnSelects() {
   }));
   const basePrefix = baseAlias || (joinInfos.length > 0 ? baseTable : '');
 
+  // ── ON 조건 별칭 자동 갱신 ──
+  const aliasEl = document.getElementById('table-alias');
+  if ('prevPrefix' in aliasEl.dataset) {
+    updateOnConds(aliasEl.dataset.prevPrefix, basePrefix);
+  }
+  aliasEl.dataset.prevPrefix = basePrefix;
+  [...cards].forEach((card, idx) => {
+    const ji = joinInfos[idx];
+    const curPrefix = ji.alias || ji.table;
+    if ('prevPrefix' in card.dataset) {
+      updateOnConds(card.dataset.prevPrefix, curPrefix);
+    }
+    card.dataset.prevPrefix = curPrefix;
+  });
+
   cards.forEach((card, idx) => {
     const ji = joinInfos[idx];
     const joinPrefix = ji.alias || ji.table;
 
-    // LEFT SELECT: this join's columns
+    // LEFT COMBO: this join's columns
     const leftSel = card.querySelector('.on-left-sel');
-    const leftCur = leftSel.value;
-    leftSel.innerHTML = ji.cols.length
-      ? ji.cols.map(c => {
-          const key = joinPrefix ? joinPrefix + '.' + c : c;
-          return '<option value="' + key + '">' + key + '</option>';
+    const leftCur = leftSel.dataset.selectedValue || '';
+    const leftDrop = leftSel.closest('.on-combo').querySelector('.on-combo-drop');
+    leftDrop.innerHTML = ji.cols.length
+      ? '<div class="copt-group">' + (joinPrefix || ji.table || 'JOIN').toUpperCase() + '</div>' +
+        ji.cols.map(c => {
+          const key = joinPrefix ? joinPrefix + '.' + c.toLowerCase() : c.toLowerCase();
+          const lbl = c.toLowerCase();
+          return '<div class="copt" data-value="' + key + '" onmousedown="selectOnCombo(this,\'' + key + '\')">' + lbl + '</div>';
         }).join('')
-      : '<option value="">-- 컬럼 없음 --</option>';
-    if (leftCur && [...leftSel.options].some(o => o.value === leftCur)) leftSel.value = leftCur;
+      : '<div class="copt" style="color:var(--muted);cursor:default">-- 컬럼 없음 --</div>';
+    if (leftCur && [...leftDrop.querySelectorAll('.copt')].some(o => o.dataset.value === leftCur)) {
+      const d = leftCur.indexOf('.'); leftSel.value = d === -1 ? leftCur : leftCur.slice(d + 1); leftSel.dataset.selectedValue = leftCur;
+    } else { leftSel.value = ''; delete leftSel.dataset.selectedValue; }
 
-    // RIGHT SELECT: base table + other joins (optgroups)
+    // RIGHT COMBO: base table + other joins (groups)
     const rightSel = card.querySelector('.on-right-sel');
-    const rightCur = rightSel.value;
+    const rightCur = rightSel.dataset.selectedValue || '';
     let html = '';
     if (baseCols.length) {
       const baseLabel = basePrefix || baseTable || '베이스 테이블';
-      html += '<optgroup label="' + baseLabel + '">';
+      html += '<div class="copt-group">' + baseLabel + '</div>';
       baseCols.forEach(c => {
-        const key = basePrefix ? basePrefix + '.' + c : c;
-        html += '<option value="' + key + '">' + key + '</option>';
+        const key = basePrefix ? basePrefix + '.' + c.toLowerCase() : c.toLowerCase();
+        const lbl = c.toLowerCase();
+        html += '<div class="copt" data-value="' + key + '" onmousedown="selectOnCombo(this,\'' + key + '\')">' + lbl + '</div>';
       });
-      html += '</optgroup>';
     }
     joinInfos.forEach((oji, oidx) => {
       if (oidx === idx || !oji.cols.length) return;
       const oPrefix = oji.alias || oji.table;
-      html += '<optgroup label="' + (oPrefix || oji.table) + '">';
+      html += '<div class="copt-group">' + (oPrefix || oji.table) + '</div>';
       oji.cols.forEach(c => {
-        const key = oPrefix ? oPrefix + '.' + c : c;
-        html += '<option value="' + key + '">' + key + '</option>';
+        const key = oPrefix ? oPrefix + '.' + c.toLowerCase() : c.toLowerCase();
+        const lbl = c.toLowerCase();
+        html += '<div class="copt" data-value="' + key + '" onmousedown="selectOnCombo(this,\'' + key + '\')">' + lbl + '</div>';
       });
-      html += '</optgroup>';
     });
-    rightSel.innerHTML = html || '<option value="">-- 다른 테이블 없음 --</option>';
-    if (rightCur && [...rightSel.options].some(o => o.value === rightCur)) rightSel.value = rightCur;
+    const rightDrop = rightSel.closest('.on-combo').querySelector('.on-combo-drop');
+    rightDrop.innerHTML = html || '<div class="copt" style="color:var(--muted);cursor:default">-- 다른 테이블 없음 --</div>';
+    if (rightCur && [...rightDrop.querySelectorAll('.copt')].some(o => o.dataset.value === rightCur)) {
+      const d = rightCur.indexOf('.'); rightSel.value = d === -1 ? rightCur : rightCur.slice(d + 1); rightSel.dataset.selectedValue = rightCur;
+    } else { rightSel.value = ''; delete rightSel.dataset.selectedValue; }
   });
 }
 
@@ -598,19 +736,56 @@ function refreshOnSelects() {
 function renderPkChips() {
   const cols = getColumns();
   const wrap = document.getElementById('pk-chips');
-  if (!cols.length) {
-    wrap.innerHTML = '<span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>';
-    return;
-  }
   [...pkCols].forEach(pk => { if (!cols.includes(pk)) pkCols.delete(pk); });
-  wrap.innerHTML = cols.map(c =>
-    '<div class="pk-chip' + (pkCols.has(c)?' active':'') + '" onclick="togglePk(\'' + c + '\')">' + c + '</div>'
+  if (!pkCols.size) { wrap.innerHTML = ''; return; }
+  wrap.innerHTML = [...pkCols].map(pk =>
+    '<div class="pk-chip active">' + pk.toLowerCase() +
+    '<span class="chip-remove" onclick="removePk(\'' + pk + '\')" title="제거">✕</span>' +
+    '</div>'
   ).join('');
 }
 
-function togglePk(col) {
-  pkCols.has(col) ? pkCols.delete(col) : pkCols.add(col);
+function removePk(col) {
+  pkCols.delete(col);
   renderPkChips();
+  refreshPkCombo();
+  if (getTable()) generate();
+}
+
+/* ── PK 콤보박스 ── */
+function openPkCombo(input) {
+  refreshPkCombo();
+  input.closest('.on-combo').querySelector('.on-combo-drop').classList.add('open');
+  filterPkCombo(input);
+}
+
+function filterPkCombo(input) {
+  const q = input.value.toLowerCase();
+  input.closest('.on-combo').querySelector('.on-combo-drop').querySelectorAll('.copt').forEach(opt => {
+    opt.classList.toggle('hidden', !!q && !opt.textContent.toLowerCase().includes(q));
+  });
+}
+
+function refreshPkCombo() {
+  const input = document.getElementById('pk-combo');
+  if (!input) return;
+  const cols = getColumns();
+  const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+  const available = cols.filter(c => !pkCols.has(c));
+  drop.innerHTML = available.length
+    ? available.map(c =>
+        '<div class="copt" data-value="' + c + '" onmousedown="selectPkCombo(this,\'' + c + '\')">' + c.toLowerCase() + '</div>'
+      ).join('')
+    : '<div class="copt" style="color:var(--muted);cursor:default">선택 가능한 컬럼 없음</div>';
+}
+
+function selectPkCombo(el, col) {
+  pkCols.add(col);
+  const input = el.closest('.on-combo').querySelector('.on-combo-input');
+  input.value = '';
+  el.closest('.on-combo').querySelector('.on-combo-drop').classList.remove('open');
+  renderPkChips();
+  refreshPkCombo();
   if (getTable()) generate();
 }
 
@@ -625,96 +800,117 @@ function condTakenBy(col, exclude) {
   return null;
 }
 
-function makeChip(c, activeClass, toggleFn, takenBy) {
-  if (takenBy) {
-    return '<div class="pk-chip disabled" title="' + takenBy + '에서 선택됨">' + c + '</div>';
+/* ── 조건 칩 렌더러: 선택된 항목만 X버튼 칩으로 표시 ── */
+function renderCondChips(wrapId, activeSet, removeFn, activeClass) {
+  const wrap    = document.getElementById(wrapId);
+  const allKeys = buildAllCondKeys(getColumns(), mainPrefix(getAlias(), getTable(), getJoins()), getJoins());
+  [...activeSet].forEach(k => { if (!allKeys.includes(k)) activeSet.delete(k); });
+
+  if (!activeSet.size) {
+    wrap.innerHTML = '';
+    return;
   }
-  return '<div class="pk-chip' + activeClass + '" onclick="' + toggleFn + '(\'' + c + '\')">' + c + '</div>';
+  wrap.innerHTML = [...activeSet].map(key => {
+    const lbl = key.includes('.') ? key.slice(key.indexOf('.') + 1) : key;
+    return '<div class="pk-chip ' + activeClass + '">'
+      + lbl
+      + '<span class="chip-remove" onclick="' + removeFn + '(\'' + key + '\')" title="제거">✕</span>'
+      + '</div>';
+  }).join('');
 }
 
-/* ── 조건 칩 통합 렌더러 ── */
-function renderCondChips(wrapId, activeSet, toggleFnName, activeClass, takenExclude) {
-  const wrap     = document.getElementById(wrapId);
+/* ── 조건 콤보박스 ── */
+function openCondCombo(input) {
+  const type = input.dataset.condType;
+  const sets = { eq: eqCols, in: inCols, like: likeCols, date: dateCols };
+  refreshCondCombo(input, sets[type], type);
+  const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+  drop.classList.add('open');
+  filterCondCombo(input);
+}
+
+function filterCondCombo(input) {
+  const q = input.value.toLowerCase();
+  input.closest('.on-combo').querySelector('.on-combo-drop').querySelectorAll('.copt').forEach(opt => {
+    opt.classList.toggle('hidden', !!q && !opt.textContent.toLowerCase().includes(q));
+  });
+}
+
+function refreshCondCombo(input, activeSet, type) {
   const joins    = getJoins();
   const mainCols = getColumns();
   const mPrefix  = mainPrefix(getAlias(), getTable(), joins);
+  const hasJoins = joins.some(j => j.cols.length > 0);
+  const drop     = input.closest('.on-combo').querySelector('.on-combo-drop');
 
-  const allKeys = buildAllCondKeys(mainCols, mPrefix, joins);
-  if (!allKeys.length) {
-    wrap.innerHTML = '<span style="color:var(--muted);font-size:.75rem">컬럼을 먼저 입력하세요</span>';
+  if (!mainCols.length) {
+    drop.innerHTML = '<div class="copt" style="color:var(--muted);cursor:default">컬럼을 먼저 입력하세요</div>';
     return;
   }
-  [...activeSet].forEach(k => { if (!allKeys.includes(k)) activeSet.delete(k); });
 
-  const hasJoins = joins.some(j => j.cols.length > 0);
+  function makeOpt(key) {
+    if (activeSet.has(key) || condTakenBy(key, type)) return '';
+    const lbl = key.includes('.') ? key.slice(key.indexOf('.') + 1) : key;
+    return '<div class="copt" data-value="' + key + '" onmousedown="selectCondCombo(this,\'' + key + '\',\'' + type + '\')">' + lbl + '</div>';
+  }
+
+  let html = '';
   const mainKeys = mainCols.map(c => colKeyFull(c, mPrefix));
 
-  function chipsHtml(keys) {
-    return keys.map(k =>
-      makeChip(k, activeSet.has(k) ? ' '+activeClass : '', toggleFnName, condTakenBy(k, takenExclude))
-    ).join('');
-  }
-
   if (!hasJoins) {
-    // JOIN 없음: 레이블 없이 플랫 렌더링
-    wrap.innerHTML = '<div class="chip-row"><div class="chip-row-chips">' + chipsHtml(mainKeys) + '</div></div>';
-    return;
+    mainKeys.forEach(k => { html += makeOpt(k); });
+  } else {
+    const baseLabel = (mPrefix || getTable() || 'BASE').toUpperCase();
+    const baseHtml  = mainKeys.map(makeOpt).join('');
+    if (baseHtml) html += '<div class="copt-group">' + baseLabel + '</div>' + baseHtml;
+    joins.forEach(j => {
+      if (!j.cols.length) return;
+      const prefix = j.alias || j.table;
+      const jHtml  = j.cols.map(c => makeOpt(colKeyFull(c, prefix))).join('');
+      if (jHtml) html += '<div class="copt-group">' + prefix.toUpperCase() + '</div>' + jHtml;
+    });
   }
 
-  // JOIN 있음: 테이블별로 행 분리, 왼쪽에 테이블명/별칭 레이블
-  const baseLabel = (mPrefix || getTable() || 'BASE').toUpperCase();
-  let html = '<div class="chip-row">'
-    + '<span class="chip-row-lbl base-lbl" title="' + baseLabel + '">' + baseLabel + '</span>'
-    + '<div class="chip-row-chips">' + chipsHtml(mainKeys) + '</div>'
-    + '</div>';
+  drop.innerHTML = html || '<div class="copt" style="color:var(--muted);cursor:default">선택 가능한 컬럼 없음</div>';
+}
 
-  joins.forEach(j => {
-    if (!j.cols.length) return;
-    const prefix = j.alias || j.table;
-    const jLabel = prefix.toUpperCase();
-    const jKeys  = j.cols.map(c => colKeyFull(c, prefix));
-    html += '<div class="chip-row">'
-      + '<span class="chip-row-lbl join-lbl" title="' + jLabel + '">' + jLabel + '</span>'
-      + '<div class="chip-row-chips">' + chipsHtml(jKeys) + '</div>'
-      + '</div>';
+function selectCondCombo(el, key, type) {
+  const sets = { eq: eqCols, in: inCols, like: likeCols, date: dateCols };
+  sets[type].add(key);
+  const input = el.closest('.on-combo').querySelector('.on-combo-input');
+  input.value = '';
+  el.closest('.on-combo').querySelector('.on-combo-drop').classList.remove('open');
+  renderAllCondChips();
+  if (getTable()) generate();
+}
+
+function refreshAllCondCombos() {
+  const map = { eq: eqCols, in: inCols, like: likeCols, date: dateCols };
+  Object.entries(map).forEach(([type, set]) => {
+    const el = document.getElementById(type + '-combo');
+    if (el) refreshCondCombo(el, set, type);
   });
-
-  wrap.innerHTML = html;
 }
 
 function renderAllCondChips() {
   renderEqChips(); renderInChips(); renderLikeChips(); renderDateChips();
+  refreshAllCondCombos();
 }
 
-function renderEqChips()   { renderCondChips('eq-chips',   eqCols,   'toggleEq',   'eq-active',   'eq'); }
-function renderInChips()   { renderCondChips('in-chips',   inCols,   'toggleIn',   'in-active',   'in'); }
-function renderLikeChips() { renderCondChips('like-chips', likeCols, 'toggleLike', 'like-active', 'like'); }
-function renderDateChips() { renderCondChips('date-chips', dateCols, 'toggleDate', 'date-active', 'date'); }
+function renderEqChips()   { renderCondChips('eq-chips',   eqCols,   'removeEq',   'eq-active'); }
+function renderInChips()   { renderCondChips('in-chips',   inCols,   'removeIn',   'in-active'); }
+function renderLikeChips() { renderCondChips('like-chips', likeCols, 'removeLike', 'like-active'); }
+function renderDateChips() { renderCondChips('date-chips', dateCols, 'removeDate', 'date-active'); }
 
-function toggleEq(col) {
-  if (condTakenBy(col, 'eq')) return;
-  eqCols.has(col) ? eqCols.delete(col) : eqCols.add(col);
-  renderAllCondChips(); if (getTable()) generate();
-}
-function toggleIn(col) {
-  if (condTakenBy(col, 'in')) return;
-  inCols.has(col) ? inCols.delete(col) : inCols.add(col);
-  renderAllCondChips(); if (getTable()) generate();
-}
-function toggleLike(col) {
-  if (condTakenBy(col, 'like')) return;
-  likeCols.has(col) ? likeCols.delete(col) : likeCols.add(col);
-  renderAllCondChips(); if (getTable()) generate();
-}
-function toggleDate(col) {
-  if (condTakenBy(col, 'date')) return;
-  dateCols.has(col) ? dateCols.delete(col) : dateCols.add(col);
-  renderAllCondChips(); if (getTable()) generate();
-}
+function removeEq(col)   { eqCols.delete(col);   renderAllCondChips(); if (getTable()) generate(); }
+function removeIn(col)   { inCols.delete(col);   renderAllCondChips(); if (getTable()) generate(); }
+function removeLike(col) { likeCols.delete(col); renderAllCondChips(); if (getTable()) generate(); }
+function removeDate(col) { dateCols.delete(col); renderAllCondChips(); if (getTable()) generate(); }
 
 function onInputChange() {
   refreshOnSelects();
   renderPkChips();
+  refreshPkCombo();
   renderAllCondChips();
   if (getTable() && getColumns().length > 0) generate();
 }
@@ -1072,19 +1268,19 @@ function loadSample() {
     const onList = card.querySelector('.on-cond-list');
     const onItem = document.createElement('div');
     onItem.className = 'on-cond-item';
-    onItem.dataset.left  = 'r.USER_ID';
-    onItem.dataset.right = 't.USER_ID';
+    onItem.dataset.left  = 'r.user_id';
+    onItem.dataset.right = 't.user_id';
     onItem.innerHTML =
-      '<span class="on-cond-text">r.USER_ID = t.USER_ID</span>' +
+      '<span class="on-cond-text">r.user_id = t.user_id</span>' +
       '<button class="btn-remove" onclick="removeOnCond(this)" title="제거">✕</button>';
     onList.appendChild(onItem);
   }
   // 베이스 테이블 alias "t" 기준 키
-  pkCols   = new Set(['USER_ID']);
-  eqCols   = new Set(['T.EMAIL', 'T.PHONE_NO']);
-  inCols   = new Set(['T.STATUS_CD']);
-  likeCols = new Set(['T.USER_NAME']);
-  dateCols = new Set(['T.REG_DT']);
+  pkCols   = new Set(['user_id']);
+  eqCols   = new Set(['t.email', 't.phone_no']);
+  inCols   = new Set(['t.status_cd']);
+  likeCols = new Set(['t.user_name']);
+  dateCols = new Set(['t.reg_dt']);
   renderPkChips();
   renderAllCondChips();
   generate();
