@@ -71,7 +71,7 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 .chip-filter { flex:1; font-size:.72rem; padding:2px 7px; border:1px solid var(--border); border-radius:4px; background:var(--surface); color:var(--fg); outline:none; min-width:0; }
 .chip-filter:focus { border-color:var(--primary); }
 .chip-row-chips { display:flex; flex-wrap:wrap; gap:5px; }
-.pk-chip { padding:3px 10px; border-radius:20px; font-size:.75rem; font-weight:700; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--muted); transition:all .13s; user-select:none; }
+.pk-chip { padding:3px 10px; border-radius:20px; font-size:.82rem; font-weight:500; cursor:pointer; border:1.5px solid var(--border); background:var(--surface3); color:var(--muted); transition:all .13s; user-select:none; }
 .pk-chip.active       { background:rgba(52,109,202,.2);   border-color:var(--primary-h); color:var(--primary-h); }
 .pk-chip.eq-active    { background:rgba(87,171,90,.15);   border-color:var(--green);     color:var(--green); }
 .pk-chip.in-active    { background:rgba(74,198,169,.15);  border-color:var(--teal);      color:var(--teal); }
@@ -81,7 +81,7 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 .pk-chip { display:inline-flex; align-items:center; gap:4px; }
 .chip-remove { cursor:pointer; font-size:.6rem; opacity:.5; line-height:1; padding:0 1px; flex-shrink:0; }
 .chip-remove:hover { opacity:1; color:#e06060; }
-.cond-combo { margin-bottom:5px; flex:none; width:50%; }
+.cond-combo { flex:1; min-width:160px; }
 .pk-hint { font-size:.7rem; color:var(--muted); margin-top:4px; }
 
 /* 조건 컬럼 그룹 */
@@ -121,10 +121,11 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
 .on-combo-drop .copt-group { padding:4px 8px; font-size:.67rem; font-weight:700; color:var(--text); text-transform:uppercase; background:var(--primary); opacity:0.85; position:sticky; top:0; border-bottom:1px solid var(--border); }
 .on-combo-drop .copt { padding:4px 10px; font-size:.9rem; cursor:pointer; color:var(--fg); }
 .on-combo-drop .copt:hover { background:var(--primary); color:#fff; }
+.on-combo-drop .copt.kbd-active { background:var(--primary); color:#fff; }
 .on-combo-drop .copt.hidden { display:none; }
 .on-cond-list { display:flex; flex-direction:column; gap:3px; }
 .on-cond-item { display:flex; align-items:center; gap:6px; background:var(--surface3); border:1px solid var(--border); border-radius:4px; padding:3px 8px; }
-.on-cond-text { flex:1; font-family:'Consolas','Fira Code',monospace; font-size:.75rem; color:var(--cyan); }
+.on-cond-text { flex:1; font-family:'Consolas','Fira Code',monospace; font-size:.85rem; color:var(--cyan); }
 
 /* OPTIONS */
 .option-grid { display:flex; flex-direction:column; gap:6px; }
@@ -263,41 +264,49 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
       <div class="cond-group">
 
         <div class="cond-section eq-sec">
-          <label>= 조건 컬럼 <span style="color:var(--green);font-weight:400">(SELECT LIST WHERE = 조건 생성)</span></label>
-          <div class="cond-combo on-combo">
-            <input class="on-combo-input" id="eq-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="eq" autocomplete="off"
-              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
-            <div class="on-combo-drop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:12px;">
+            <label style="white-space:nowrap;flex-shrink:0;">= 조건 컬럼</label>
+            <div class="cond-combo on-combo">
+              <input class="on-combo-input" id="eq-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="eq" autocomplete="off"
+                oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+              <div class="on-combo-drop"></div>
+            </div>
           </div>
           <div class="pk-chips" id="eq-chips"></div>
         </div>
 
         <div class="cond-section in-sec">
-          <label>IN 조건 컬럼 <span style="color:var(--teal);font-weight:400">(SELECT LIST &lt;foreach&gt; IN 절 생성)</span></label>
-          <div class="cond-combo on-combo">
-            <input class="on-combo-input" id="in-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="in" autocomplete="off"
-              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
-            <div class="on-combo-drop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:12px;">
+            <label style="white-space:nowrap;flex-shrink:0;">IN 조건 컬럼</label>
+            <div class="cond-combo on-combo">
+              <input class="on-combo-input" id="in-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="in" autocomplete="off"
+                oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+              <div class="on-combo-drop"></div>
+            </div>
           </div>
           <div class="pk-chips" id="in-chips"></div>
         </div>
 
         <div class="cond-section like-sec">
-          <label>LIKE 조건 컬럼 <span style="color:var(--orange);font-weight:400">(SELECT LIST LIKE '%…%' 절 생성)</span></label>
-          <div class="cond-combo on-combo">
-            <input class="on-combo-input" id="like-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="like" autocomplete="off"
-              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
-            <div class="on-combo-drop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:12px;">
+            <label style="white-space:nowrap;flex-shrink:0;">LIKE 조건 컬럼</label>
+            <div class="cond-combo on-combo">
+              <input class="on-combo-input" id="like-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="like" autocomplete="off"
+                oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+              <div class="on-combo-drop"></div>
+            </div>
           </div>
           <div class="pk-chips" id="like-chips"></div>
         </div>
 
         <div class="cond-section date-sec">
-          <label>날짜 범위 컬럼 <span style="color:var(--purple);font-weight:400">(SELECT LIST _from / _to 범위 조건 생성)</span></label>
-          <div class="cond-combo on-combo">
-            <input class="on-combo-input" id="date-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="date" autocomplete="off"
-              oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
-            <div class="on-combo-drop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:12px;">
+            <label style="white-space:nowrap;flex-shrink:0;">날짜 범위 컬럼</label>
+            <div class="cond-combo on-combo">
+              <input class="on-combo-input" id="date-combo" type="text" placeholder="컬럼 검색 후 선택..." data-cond-type="date" autocomplete="off"
+                oninput="filterCondCombo(this)" onfocus="openCondCombo(this)" onblur="closeOnComboDelay(this)">
+              <div class="on-combo-drop"></div>
+            </div>
           </div>
           <div class="pk-chips" id="date-chips"></div>
         </div>
@@ -309,11 +318,13 @@ textarea { resize:vertical; font-family:'Consolas','Fira Code',monospace; font-s
       <span class="base-card-lbl">단건 조회 / UPDATE / DELETE 조건</span>
       <div class="cond-group">
         <div class="cond-section pk-sec" style="border-radius:8px">
-          <label>PK 컬럼 선택 <span style="color:var(--muted);font-weight:400">(WHERE 기준)</span></label>
-          <div class="cond-combo on-combo">
-            <input class="on-combo-input" id="pk-combo" type="text" placeholder="컬럼 검색 후 선택..." autocomplete="off"
-              oninput="filterPkCombo(this)" onfocus="openPkCombo(this)" onblur="closeOnComboDelay(this)">
-            <div class="on-combo-drop"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:12px;">
+            <label style="white-space:nowrap;flex-shrink:0;">PK 컬럼 선택</label>
+            <div class="cond-combo on-combo">
+              <input class="on-combo-input" id="pk-combo" type="text" placeholder="컬럼 검색 후 선택..." autocomplete="off"
+                oninput="filterPkCombo(this)" onfocus="openPkCombo(this)" onblur="closeOnComboDelay(this)">
+              <div class="on-combo-drop"></div>
+            </div>
           </div>
           <div class="pk-chips" id="pk-chips"></div>
         </div>
@@ -596,9 +607,42 @@ function openOnCombo(input) {
 }
 function closeOnComboDelay(input) {
   setTimeout(() => {
-    input.closest('.on-combo').querySelector('.on-combo-drop').classList.remove('open');
+    const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+    drop.querySelectorAll('.copt.kbd-active').forEach(el => el.classList.remove('kbd-active'));
+    drop.classList.remove('open');
   }, 200);
 }
+function onComboKeydown(e, input) {
+  const drop = input.closest('.on-combo').querySelector('.on-combo-drop');
+  const isOpen = drop.classList.contains('open');
+  if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (!isOpen) drop.classList.add('open');
+    const opts = [...drop.querySelectorAll('.copt:not(.hidden)')];
+    if (!opts.length) return;
+    const cur = drop.querySelector('.copt.kbd-active');
+    let idx = cur ? opts.indexOf(cur) : -1;
+    if (cur) cur.classList.remove('kbd-active');
+    idx = e.key === 'ArrowDown' ? (idx + 1) % opts.length : (idx - 1 + opts.length) % opts.length;
+    opts[idx].classList.add('kbd-active');
+    opts[idx].scrollIntoView({ block: 'nearest' });
+  } else if (e.key === 'Enter') {
+    const active = drop.querySelector('.copt.kbd-active');
+    if (active) {
+      e.preventDefault();
+      active.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+      setTimeout(() => {
+        if (document.activeElement === input && input.closest('.cond-combo')) drop.classList.add('open');
+      }, 0);
+    }
+  } else if (e.key === 'Escape') {
+    drop.querySelectorAll('.copt.kbd-active').forEach(el => el.classList.remove('kbd-active'));
+    drop.classList.remove('open');
+  }
+}
+document.addEventListener('keydown', e => {
+  if (e.target.classList.contains('on-combo-input')) onComboKeydown(e, e.target);
+});
 function filterOnCombo(input) {
   const q = input.value.toLowerCase();
   if (input.dataset.selectedValue && input.value !== input.dataset.selectedValue) {
@@ -811,9 +855,8 @@ function renderCondChips(wrapId, activeSet, removeFn, activeClass) {
     return;
   }
   wrap.innerHTML = [...activeSet].map(key => {
-    const lbl = key.includes('.') ? key.slice(key.indexOf('.') + 1) : key;
     return '<div class="pk-chip ' + activeClass + '">'
-      + lbl
+      + key
       + '<span class="chip-remove" onclick="' + removeFn + '(\'' + key + '\')" title="제거">✕</span>'
       + '</div>';
   }).join('');
@@ -1049,7 +1092,7 @@ function generate() {
              sqlInd+'        AND '+sqlRef+' >= #{p.'+snake+'_from}\n'+
              sqlInd+'    </if>\n'+
              sqlInd+'    <if test="p.'+snake+'_to != null and p.'+snake+'_to != \'\'">\n'+
-             sqlInd+'        AND '+sqlRef+' &lt;= #{p.'+snake+'_to}\n'+
+             sqlInd+'        AND '+sqlRef+' <![CDATA[<=]]> #{p.'+snake+'_to}\n'+
              sqlInd+'    </if>';
     }
     if (eqCols.has(key)) {
@@ -1218,10 +1261,14 @@ function highlight(code) {
       '<span class="xa">$1</span>$2<span class="xv">$3</span>');
     return '<span class="xb">'+open+'</span><span class="xt">'+tag+'</span>'+ah+'<span class="xb">'+sc+close+'</span>';
   });
-  SQL_KW.forEach(kw => {
-    s = s.replace(new RegExp('(?<![\\w<])\\b('+kw+')\\b(?![^<]*>)','g'),
-      '<span class="sk">$1</span>');
-  });
+  const parts = s.split(/(<[^>]*>)/);
+  s = parts.map((p, i) => {
+    if (i % 2 === 1) return p; // HTML 태그는 건드리지 않음
+    SQL_KW.forEach(kw => {
+      p = p.replace(new RegExp('\\b('+kw+')\\b', 'g'), '<span class="sk">$1</span>');
+    });
+    return p;
+  }).join('');
   return s;
 }
 
