@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Spring Backend Generator</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#0d1117; --surface:#161b22; --surface2:#21262d; --surface3:#2d333b;
+  --border:#30363d; --text:#cdd9e5; --muted:#768390;
+  --primary:#316dca; --primary-h:#388bfd;
+  --green:#57ab5a; --yellow:#e3b341; --orange:#cc7832;
+  --purple:#b392f0; --red:#f47067; --cyan:#80ccff; --teal:#38bdf8;
+  --xml-val:#96d0ff; --xml-cmt:#636e7b;
+  --radius:8px;
+}
+[data-theme="light"] {
+  --bg:#ffffff; --surface:#f8f9fb; --surface2:#f1f4f7; --surface3:#ffffff;
+  --border:#cdd3da; --text:#1f2328; --muted:#636d79;
+  --primary:#0969da; --primary-h:#0550ae;
+  --green:#1a7f37; --yellow:#9a6700; --orange:#953800;
+  --purple:#6639ba; --red:#cf222e; --cyan:#0969da; --teal:#0284c7;
+  --xml-val:#0550ae; --xml-cmt:#57606a;
+}
+body { font-family:'Segoe UI','Apple SD Gothic Neo',sans-serif; background:var(--bg); color:var(--text); height:100vh; display:flex; flex-direction:column; overflow:hidden; }
+header { background:var(--surface); border-bottom:1px solid var(--border); padding:10px 20px; display:flex; align-items:center; gap:10px; flex-shrink:0; }
+header h1 { font-size:1.25rem; font-weight:700; }
+.logo { color:var(--green); }
+.sub  { color:var(--muted); font-weight:400; font-size:1.05rem; }
+.hdr-actions { margin-left:auto; display:flex; gap:8px; align-items:center; }
+.layout { display:grid; grid-template-columns:500px 1fr; flex:1; overflow:hidden; }
+.panel { display:flex; flex-direction:column; overflow:hidden; border-right:1px solid var(--border); background:var(--surface2); }
+.panel-title { padding:9px 14px; font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; background:var(--surface); border-bottom:1px solid var(--border); flex-shrink:0; }
+.panel-body { flex:1; overflow-y:auto; padding:18px; display:flex; flex-direction:column; gap:16px; }
+.section-label { font-size:.72rem; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; }
+.section-box { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:12px 14px; display:flex; flex-direction:column; gap:10px; }
+.field { display:flex; flex-direction:column; gap:5px; }
+.field label { font-size:.82rem; font-weight:700; color:var(--text); }
+.field label .note { font-weight:400; color:var(--muted); font-size:.75rem; }
+input[type=text], select { background:var(--surface3); border:1px solid var(--border); border-radius:6px; color:var(--text); font-family:inherit; font-size:.85rem; padding:7px 10px; width:100%; transition:border-color .15s; }
+input[type=text]:focus, select:focus { outline:none; border-color:var(--primary-h); box-shadow:0 0 0 2px rgba(56,139,253,.15); }
+input::placeholder { color:var(--muted); }
+.row2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.option-grid { display:flex; flex-direction:column; gap:10px; }
+.option-divider { border:none; border-top:1px solid var(--border); margin:2px 0; }
+.opt-row { display:flex; align-items:center; gap:8px; }
+.opt-row input[type=checkbox] { width:14px; height:14px; accent-color:var(--primary-h); cursor:pointer; flex-shrink:0; }
+.opt-row label { font-size:.8rem; color:var(--text); cursor:pointer; flex:1; }
+.opt-row .badge { font-size:.65rem; font-weight:700; padding:1px 6px; border-radius:3px; flex-shrink:0; }
+.badge-blue  { background:rgba(56,139,253,.15); color:var(--primary-h); border:1px solid rgba(56,139,253,.3); }
+.badge-green { background:rgba(87,171,90,.15);  color:var(--green);     border:1px solid rgba(87,171,90,.3); }
+.badge-red   { background:rgba(244,112,103,.15);color:var(--red);       border:1px solid rgba(244,112,103,.3); }
+.badge-yellow{ background:rgba(227,179,65,.15); color:var(--yellow);    border:1px solid rgba(227,179,65,.3); }
+.btn { display:inline-flex; align-items:center; justify-content:center; gap:6px; border:none; border-radius:6px; cursor:pointer; font-family:inherit; font-weight:600; font-size:.82rem; padding:7px 14px; transition:all .13s; }
+.btn:active { transform:scale(.96); }
+.btn-primary { background:var(--primary); color:#fff; }
+.btn-primary:hover { background:var(--primary-h); }
+.btn-gen { background:linear-gradient(135deg,#1a7f37,#316dca); color:#fff; font-size:.9rem; padding:10px; width:100%; }
+.btn-gen:hover { filter:brightness(1.1); }
+.btn-ghost { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.btn-ghost:hover { background:var(--surface3); }
+.btn-copy { background:rgba(87,171,90,.15); color:var(--green); border:1px solid rgba(87,171,90,.3); font-size:.75rem; padding:4px 10px; }
+.btn-copy:hover { background:rgba(87,171,90,.25); }
+.btn-download { background:var(--primary); color:#fff; padding:8px 16px; }
+.btn-download:hover { background:var(--primary-h); }
+.btn-xs { padding:3px 8px; font-size:.72rem; }
+.btn-theme { background:var(--surface2); color:var(--text); border:1px solid var(--border); width:32px; padding:0; height:28px; font-size:1rem; display:inline-flex; align-items:center; justify-content:center; border-radius:6px; cursor:pointer; transition:all .15s; flex-shrink:0; }
+.btn-theme:hover { background:var(--surface3); }
+.output-panel { display:flex; flex-direction:column; overflow:hidden; }
+.output-header { padding:8px 14px; background:var(--surface); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:0; flex-shrink:0; flex-wrap:wrap; }
+.output-label { background:var(--primary); color:#fff; padding:3px 10px; border-radius:4px; font-size:.72rem; font-weight:700; letter-spacing:.06em; white-space:nowrap; flex-shrink:0; }
+.output-divider { width:1px; height:20px; background:var(--border); margin:0 12px; flex-shrink:0; }
+.q-tabs { display:flex; gap:2px; overflow-x:auto; flex:1; }
+.q-tab { padding:4px 12px; border-radius:5px; font-size:.75rem; font-weight:700; cursor:pointer; color:var(--muted); transition:all .13s; white-space:nowrap; border:1px solid transparent; }
+.q-tab:hover { color:var(--text); }
+.q-tab.active { background:var(--surface3); color:var(--text); border-color:var(--border); }
+.code-wrap { flex:1; overflow-y:auto; }
+.code-block { display:none; flex-direction:column; height:100%; }
+.code-block.active { display:flex; }
+.code-toolbar { padding:7px 14px; background:var(--surface2); border-bottom:1px solid var(--border); display:flex; align-items:center; gap:8px; flex-shrink:0; }
+.code-toolbar .desc { font-size:.75rem; color:var(--muted); flex:1; }
+.code-toolbar .file-tag { font-size:.72rem; font-weight:700; padding:2px 8px; border-radius:4px; background:rgba(87,171,90,.15); color:var(--green); border:1px solid rgba(87,171,90,.3); }
+.code-pre { flex:1; overflow:auto; padding:16px 18px; font-family:'Consolas','Fira Code',monospace; font-size:.8rem; line-height:1.75; white-space:pre; background:var(--bg); color:var(--text); }
+.empty-msg { display:flex; flex-direction:column; align-items:center; justify-content:center; height:100%; color:var(--muted); gap:10px; font-size:.9rem; text-align:center; line-height:1.8; }
+.empty-msg .icon { font-size:2.5rem; }
+/* Java highlight */
+.jk  { color:var(--orange);    font-weight:700; }
+.ja  { color:var(--primary-h); }
+.jt  { color:var(--cyan); }
+.jcn { color:var(--yellow);    font-weight:700; }
+.jm  { color:var(--green); }
+.js  { color:var(--xml-val); }
+.jc  { color:var(--xml-cmt);   font-style:italic; }
+.jp  { color:var(--muted); }
+#toast { position:fixed; bottom:18px; right:18px; background:var(--surface3); color:var(--text); padding:8px 16px; border-radius:8px; font-size:.82rem; font-weight:600; border:1px solid var(--border); opacity:0; transform:translateY(8px); transition:all .22s; z-index:100; }
+#toast.show { opacity:1; transform:translateY(0); }
+::-webkit-scrollbar { width:5px; height:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--surface3); border-radius:3px; }
+@media (max-width:700px) {
+  .layout { grid-template-columns:1fr; grid-template-rows:auto 1fr; }
+  .panel { border-right:none; border-bottom:1px solid var(--border); max-height:55vh; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🌱 <span class="logo">Spring</span> <span class="sub">Backend Generator</span></h1>
+  <div class="hdr-actions">
+    <button class="btn btn-ghost btn-xs" onclick="loadSample()">샘플 불러오기</button>
+    <button class="btn btn-download btn-xs" onclick="downloadZip()">⬇ ZIP 다운로드</button>
+    <button class="btn btn-theme" id="theme-btn" onclick="toggleTheme()" title="테마 전환">🌙</button>
+  </div>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="panel">
+    <div class="panel-title">입력</div>
+    <div class="panel-body">
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="section-label">패키지 / 모듈 정보</span>
+        <div class="section-box">
+          <div class="field">
+            <label>기본 패키지</label>
+            <input type="text" id="base-pkg" placeholder="com.example.app" oninput="onModuleChange()" />
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>모듈명 <span class="note">(camelCase)</span></label>
+              <input type="text" id="module-name" placeholder="sampleModule" oninput="onModuleChange()" />
+            </div>
+            <div class="field">
+              <label>기능 설명 <span class="note">(한글)</span></label>
+              <input type="text" id="feature-ko" placeholder="샘플 모듈" oninput="onModuleChange()" />
+            </div>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>URL 매핑 경로 <span class="note">(자동 생성)</span></label>
+              <input type="text" id="url-mapping" placeholder="sampleModule" />
+            </div>
+            <div class="field">
+              <label>네임스페이스 <span class="note">(자동 생성)</span></label>
+              <input type="text" id="namespace" placeholder="sam-mod" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="section-label">Javadoc 정보</span>
+        <div class="section-box">
+          <div class="row2">
+            <div class="field">
+              <label>작성자</label>
+              <input type="text" id="author" placeholder="Gildong Hong" />
+            </div>
+            <div class="field">
+              <label>작성일</label>
+              <input type="text" id="date" placeholder="2026. 03. 25" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="section-label">DB 테이블 정보</span>
+        <div class="section-box">
+          <div class="field">
+            <label>UUID 컬럼명 <span class="note">(PK 필드)</span></label>
+            <input type="text" id="pk-field" placeholder="sam_mod_uuid" />
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label>채번 컬럼명</label>
+              <input type="text" id="seq-col" placeholder="sam_mod_cd" oninput="onInputChange()" />
+            </div>
+            <div class="field">
+              <label>채번 코드</label>
+              <input type="text" id="seq-code" placeholder="sam" oninput="onInputChange()" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="section-label">생성할 메서드</span>
+        <div class="section-box">
+          <div class="option-grid">
+            <div class="opt-row">
+              <input type="checkbox" id="opt-find-one" checked onchange="onInputChange()" />
+              <label for="opt-find-one">단건 조회</label>
+              <span class="badge badge-blue">Map</span>
+            </div>
+            <div class="opt-row">
+              <input type="checkbox" id="opt-find-list" checked onchange="onInputChange()" />
+              <label for="opt-find-list">목록 조회</label>
+              <span class="badge badge-blue">List</span>
+            </div>
+            <hr class="option-divider" />
+            <div class="opt-row">
+              <input type="checkbox" id="opt-save-one" checked onchange="onInputChange()" />
+              <label for="opt-save-one">단건 저장 (insert / update)</label>
+              <span class="badge badge-green">ResultMap</span>
+            </div>
+            <div style="padding-left:22px;display:flex;flex-direction:column;gap:4px;">
+              <div class="opt-row">
+                <input type="checkbox" id="opt-dup-check-insert-one" checked onchange="onInputChange()" />
+                <label for="opt-dup-check-insert-one">중복 체크 (insert)</label>
+              </div>
+              <div class="opt-row">
+                <input type="checkbox" id="opt-dup-check-update-one" checked onchange="onInputChange()" />
+                <label for="opt-dup-check-update-one">중복 체크 (update)</label>
+              </div>
+            </div>
+            <div class="opt-row">
+              <input type="checkbox" id="opt-save" checked onchange="onInputChange()" />
+              <label for="opt-save">다건 저장 (insertItems + updateItems)</label>
+              <span class="badge badge-green">ResultMap</span>
+            </div>
+            <div style="padding-left:22px;display:flex;flex-direction:column;gap:4px;">
+              <div class="opt-row">
+                <input type="checkbox" id="opt-dup-check-insert" checked onchange="onInputChange()" />
+                <label for="opt-dup-check-insert">중복 체크 (insert)</label>
+              </div>
+              <div class="opt-row">
+                <input type="checkbox" id="opt-dup-check-update" checked onchange="onInputChange()" />
+                <label for="opt-dup-check-update">중복 체크 (update)</label>
+              </div>
+            </div>
+            <hr class="option-divider" />
+            <div class="opt-row">
+              <input type="checkbox" id="opt-delete-one" checked onchange="onInputChange()" />
+              <label for="opt-delete-one">단건 삭제</label>
+              <span class="badge badge-red">ResultMap</span>
+            </div>
+            <div class="opt-row">
+              <input type="checkbox" id="opt-delete" checked onchange="onInputChange()" />
+              <label for="opt-delete">다건 삭제</label>
+              <span class="badge badge-red">ResultMap</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <span class="section-label">저장 옵션</span>
+        <div class="section-box">
+          <div class="option-grid">
+            <div class="opt-row">
+              <input type="checkbox" id="opt-uuid" checked onchange="onInputChange()" />
+              <label for="opt-uuid">Insert에 UUID PK 자동 생성</label>
+            </div>
+            <div class="opt-row">
+              <input type="checkbox" id="opt-seq" onchange="onInputChange()" />
+              <label for="opt-seq">Insert에 채번 자동 생성</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-gen" onclick="generate()">⚡ 코드 생성 (Ctrl+Enter)</button>
+
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="output-panel">
+    <div class="output-header">
+      <span class="output-label">결&nbsp;과</span>
+      <div class="output-divider"></div>
+      <div class="q-tabs">
+        <div class="q-tab active"  onclick="switchTab('ctrl',this)">Controller</div>
+        <div class="q-tab"         onclick="switchTab('svc',this)">Service</div>
+        <div class="q-tab"         onclick="switchTab('repo',this)">Repository</div>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+
+      <div class="code-block active" id="block-ctrl">
+        <div class="code-toolbar">
+          <span class="file-tag" id="file-ctrl">Controller.java</span>
+          <span class="desc">HTTP 요청을 받아 Service를 호출하는 Controller</span>
+          <button class="btn btn-copy" onclick="copyBlock('ctrl')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-ctrl"></div>
+      </div>
+
+      <div class="code-block" id="block-svc">
+        <div class="code-toolbar">
+          <span class="file-tag" id="file-svc">Service.java</span>
+          <span class="desc">비즈니스 로직을 처리하는 Service</span>
+          <button class="btn btn-copy" onclick="copyBlock('svc')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-svc"></div>
+      </div>
+
+      <div class="code-block" id="block-repo">
+        <div class="code-toolbar">
+          <span class="file-tag" id="file-repo">Repository.java</span>
+          <span class="desc">MyBatis SqlSession을 통해 DB를 조작하는 Repository</span>
+          <button class="btn btn-copy" onclick="copyBlock('repo')">📋 복사</button>
+        </div>
+        <div class="code-pre" id="code-repo"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<div id="toast"></div>
+
+<script>
+/* ─────────────────────────────────────────────
+   유틸
+───────────────────────────────────────────── */
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+// highlight helpers
+const K  = s => `<span class="jk">${s}</span>`;     // keyword
+const A  = s => `<span class="ja">${s}</span>`;     // annotation
+const T  = s => `<span class="jt">${s}</span>`;     // type
+const CN = s => `<span class="jcn">${s}</span>`;    // class name
+const M  = s => `<span class="jm">${s}</span>`;     // method name
+const S  = s => `<span class="js">"${esc(s)}"</span>`;  // string literal
+const C  = s => `<span class="jc">${esc(s)}</span>`; // comment
+const P  = s => `<span class="jp">${esc(s)}</span>`; // package path
+
+function listMap()   { return `${T('List')}&lt;${T('Map')}&lt;${T('String')},${T('Object')}&gt;&gt;`; }
+function mapOf()     { return `${T('Map')}&lt;${T('String')}, ${T('Object')}&gt;`; }
+function listMapOf() { return `${T('List')}&lt;${T('Map')}&lt;${T('String')}, ${T('Object')}&gt;&gt;`; }
+
+/* ─────────────────────────────────────────────
+   이름 변환
+───────────────────────────────────────────── */
+function toPascal(s) {
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function toCamel(s) {
+  if (!s) return '';
+  return s.charAt(0).toLowerCase() + s.slice(1);
+}
+// moduleStatus → mod-sts
+function toNamespace(mod) {
+  if (!mod) return '';
+  const words = mod.replace(/([A-Z])/g, ' $1').trim().split(/\s+/);
+  return words.map(w => w.slice(0, 3).toLowerCase()).join('-');
+}
+function toUrlMapping(basePkg, mod) {
+  return mod || '';
+}
+// 을/를 판별
+function eulReul(text) {
+  const last = (text || '').trim().slice(-1);
+  const code = last.charCodeAt(0);
+  if (code >= 0xAC00 && code <= 0xD7A3) {
+    return (code - 0xAC00) % 28 !== 0 ? '을' : '를';
+  }
+  return '을';
+}
+
+/* ─────────────────────────────────────────────
+   Javadoc 생성
+───────────────────────────────────────────── */
+function javadoc(indent, descLine, returnDesc, author, date, methodName) {
+  const i = indent;
+  return [
+    `${i}${C('/**')}`,
+    `${i}${C(' * ' + descLine)}`,
+    `${i}${C(' *')}`,
+    `${i}${C(' * @author : ' + author)}`,
+    `${i}${C(' * @param param the param')}`,
+    `${i}${C(' * @return ' + returnDesc)}`,
+    `${i}${C(' * @Date : ' + date)}`,
+    `${i}${C(' * @Method Name : ' + methodName)}`,
+    `${i}${C(' */')}`,
+  ].join('\n');
+}
+
+/* ─────────────────────────────────────────────
+   입력 값 읽기
+───────────────────────────────────────────── */
+function getCfg() {
+  const basePkg   = document.getElementById('base-pkg').value.trim()    || 'com.example.app';
+  const modName   = document.getElementById('module-name').value.trim() || 'sample';
+  const featureKo = document.getElementById('feature-ko').value.trim()  || modName;
+  const author    = document.getElementById('author').value.trim()      || 'Author';
+  const date      = document.getElementById('date').value.trim()        || today();
+  const urlMap    = document.getElementById('url-mapping').value.trim() || toUrlMapping(basePkg, modName);
+  const ns        = document.getElementById('namespace').value.trim()   || toNamespace(modName);
+  const pkField   = document.getElementById('pk-field').value.trim()    || (toNamespace(modName).replace(/-/g,'_') + '_uuid');
+  const seqCol    = document.getElementById('seq-col').value.trim();
+  const seqCode   = document.getElementById('seq-code').value.trim();
+
+  const className    = toPascal(modName);
+  const instanceName = toCamel(modName);
+
+  return {
+    basePkg, modName, featureKo, author, date, urlMap, ns, pkField, seqCol, seqCode,
+    className, instanceName,
+    mFindList : document.getElementById('opt-find-list').checked,
+    mFindOne  : document.getElementById('opt-find-one').checked,
+    mSaveOne  : document.getElementById('opt-save-one').checked,
+    mSave     : document.getElementById('opt-save').checked,
+    mDeleteOne: document.getElementById('opt-delete-one').checked,
+    mDelete   : document.getElementById('opt-delete').checked,
+    optDupCheckInsertOne: document.getElementById('opt-dup-check-insert-one').checked,
+    optDupCheckUpdateOne: document.getElementById('opt-dup-check-update-one').checked,
+    optDupCheckInsert: document.getElementById('opt-dup-check-insert').checked,
+    optDupCheckUpdate: document.getElementById('opt-dup-check-update').checked,
+    optUuid    : document.getElementById('opt-uuid').checked,
+    optSeq     : document.getElementById('opt-seq').checked,
+  };
+}
+
+function today() {
+  const d = new Date();
+  return `${d.getFullYear()}. ${String(d.getMonth()+1).padStart(2,'0')}. ${String(d.getDate()).padStart(2,'0')}`;
+}
+
+/* ─────────────────────────────────────────────
+   Controller 생성
+───────────────────────────────────────────── */
+function buildController(c) {
+  const { basePkg, modName, featureKo, author, date, urlMap, className, instanceName,
+          mFindList, mFindOne, mSaveOne, mSave, mDeleteOne, mDelete } = c;
+  const svcClass = className + 'Service';
+  const svcInst  = instanceName + 'Service';
+  const needResultMap = mSaveOne || mSave || mDeleteOne || mDelete;
+  const er = eulReul(featureKo);
+  const lines = [];
+
+  lines.push(`${K('package')} ${P(basePkg + '.' + modName)};`);
+  lines.push('');
+  lines.push(`${K('import')} org.springframework.stereotype.Controller;`);
+  lines.push(`${K('import')} org.springframework.web.bind.annotation.RequestBody;`);
+  lines.push(`${K('import')} org.springframework.web.bind.annotation.RequestMapping;`);
+  lines.push(`${K('import')} org.springframework.web.bind.annotation.ResponseBody;`);
+  lines.push(`${K('import')} ${P(basePkg + '.' + modName + '.service.' + svcClass)};`);
+  if (needResultMap)
+    lines.push(`${K('import')} smartsuite.app.common.shared.ResultMap;`);
+  lines.push('');
+  lines.push(`${K('import')} javax.inject.Inject;`);
+  if (mFindList)
+    lines.push(`${K('import')} java.util.List;`);
+  lines.push(`${K('import')} java.util.Map;`);
+  lines.push('');
+  lines.push(A('@Controller'));
+  lines.push(`${A('@RequestMapping')}(${S('**/' + urlMap + '/')})`);
+  lines.push(`${K('public')} ${K('class')} ${CN(className + 'Controller')} {`);
+  lines.push('');
+  lines.push(`    ${A('@Inject')}`);
+  lines.push(`    ${CN(svcClass)} ${svcInst};`);
+
+  if (mFindOne) {
+    const mn = 'find' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 조회한다.', 'the map', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${mapOf()} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mFindList) {
+    const mn = 'findList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 조회한다.', 'the list', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${listMap()} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mSaveOne) {
+    const mn = 'save' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 저장한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${T('ResultMap')} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mSave) {
+    const mn = 'saveList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 저장한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${T('ResultMap')} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mDeleteOne) {
+    const mn = 'delete' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 삭제한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${T('ResultMap')} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mDelete) {
+    const mn = 'deleteList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 삭제한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${A('@RequestMapping')}(${K('value')}=${S(mn + '.do')})`);
+    lines.push(`    ${K('public')} ${A('@ResponseBody')} ${T('ResultMap')} ${M(mn)}(${A('@RequestBody')} ${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${svcInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+/* ─────────────────────────────────────────────
+   Service 생성
+───────────────────────────────────────────── */
+function buildService(c) {
+  const { basePkg, modName, featureKo, author, date, className, instanceName, pkField, seqCol, seqCode,
+          mFindList, mFindOne, mSaveOne, mSave, mDeleteOne, mDelete,
+          optDupCheckInsertOne, optDupCheckUpdateOne,
+          optDupCheckInsert, optDupCheckUpdate, optUuid, optSeq } = c;
+  const repoClass = className + 'Repository';
+  const repoInst  = instanceName + 'Repository';
+  const needResultMap = mSaveOne || mSave || mDeleteOne || mDelete;
+  const needUuid  = (mSaveOne || mSave) && optUuid;
+  const er = eulReul(featureKo);
+  const lines = [];
+
+  lines.push(`${K('package')} ${P(basePkg + '.' + modName + '.service')};`);
+  lines.push('');
+  lines.push(`${K('import')} org.springframework.stereotype.Service;`);
+  lines.push(`${K('import')} org.springframework.transaction.annotation.Transactional;`);
+  lines.push(`${K('import')} ${P(basePkg + '.' + modName + '.repository.' + repoClass)};`);
+  if (needResultMap)
+    lines.push(`${K('import')} smartsuite.app.common.shared.ResultMap;`);
+  lines.push(`${K('import')} smartsuite.app.common.shared.service.SharedService;`);
+  lines.push('');
+  lines.push(`${K('import')} javax.inject.Inject;`);
+  lines.push(`${K('import')} java.util.List;`);
+  lines.push(`${K('import')} java.util.Map;`);
+  if (needUuid)
+    lines.push(`${K('import')} java.util.UUID;`);
+  lines.push('');
+  lines.push(A('@Service'));
+  lines.push(A('@Transactional'));
+  lines.push(`${K('public')} ${K('class')} ${CN(className + 'Service')} {`);
+  lines.push('');
+  lines.push(`    ${A('@Inject')}`);
+  lines.push(`    ${CN(repoClass)} ${repoInst};`);
+  lines.push('');
+  lines.push(`    ${A('@Inject')}`);
+  lines.push(`    ${CN('SharedService')} sharedService;`);
+
+  if (mFindOne) {
+    const mn = 'find' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 조회한다.', 'the map', author, date, mn));
+    lines.push(`    ${K('public')} ${mapOf()} ${M(mn)}(${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${repoInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mFindList) {
+    const mn = 'findList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 조회한다.', 'the list', author, date, mn));
+    lines.push(`    ${K('public')} ${listMap()} ${M(mn)}(${mapOf()} param){`);
+    lines.push(`        ${K('return')} ${repoInst}.${M(mn)}(param);`);
+    lines.push(`    }`);
+  }
+
+  if (mSaveOne) {
+    const mn = 'save' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 저장한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${K('public')} ${T('ResultMap')} ${M(mn)}(${mapOf()} param){`);
+    lines.push(`        ${K('if')} (param.${M('get')}(${S(pkField)}) == ${K('null')}) {`);
+    if (optDupCheckInsertOne) {
+      lines.push(`            ${K('if')}(${repoInst}.${M('hasDuplicate' + className)}(param) > 0) {`);
+      lines.push(`                ${K('return')} ${T('ResultMap')}.${M('DUPLICATED')}();`);
+      lines.push(`            }`);
+    }
+    if (optUuid)
+      lines.push(`            param.${M('put')}(${S(pkField)}, ${T('UUID')}.${M('randomUUID')}().${M('toString')}());`);
+    if (optSeq && seqCol && seqCode)
+      lines.push(`            param.${M('put')}(${S(seqCol)}, sharedService.${M('generateDocumentNumber')}(${S(seqCode)}));`);
+    lines.push(`            ${repoInst}.${M('insert' + className)}(param);`);
+    lines.push(`        } ${K('else')} {`);
+    if (optDupCheckUpdateOne) {
+      lines.push(`            ${K('if')}(${repoInst}.${M('hasDuplicate' + className)}(param) > 0) {`);
+      lines.push(`                ${K('return')} ${T('ResultMap')}.${M('DUPLICATED')}();`);
+      lines.push(`            }`);
+    }
+    lines.push(`            ${repoInst}.${M('update' + className)}(param);`);
+    lines.push(`        }`);
+    lines.push(`        ${K('return')} ${T('ResultMap')}.${M('SUCCESS')}();`);
+    lines.push(`    }`);
+  }
+
+  if (mSave) {
+    const mn = 'saveList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 저장한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${K('public')} ${T('ResultMap')} ${M(mn)}(${mapOf()} param){`);
+    // insert
+    lines.push(`        ${C('// Step 1: Insert')}`);
+    lines.push(`        ${listMapOf()} insertItems = (${listMapOf()}) param.${M('get')}(${S('insertItems')});`);
+    lines.push(`        ${K('if')}(insertItems != ${K('null')} ) {`);
+    lines.push(`            ${K('for')}(${mapOf()} insertItem : insertItems) {`);
+    if (optDupCheckInsert) {
+      lines.push(`                ${K('if')}(${repoInst}.${M('hasDuplicate' + className)}(insertItem) > 0) {`);
+      lines.push(`                    ${K('return')} ${T('ResultMap')}.${M('DUPLICATED')}();`);
+      lines.push(`                } ${K('else')} {`);
+      if (optUuid)
+        lines.push(`                    insertItem.${M('put')}(${S(pkField)}, ${T('UUID')}.${M('randomUUID')}().${M('toString')}());`);
+      if (optSeq && seqCol && seqCode)
+        lines.push(`                    insertItem.${M('put')}(${S(seqCol)}, sharedService.${M('generateDocumentNumber')}(${S(seqCode)}));`);
+      lines.push(`                    ${repoInst}.${M('insert' + className)}(insertItem);`);
+      lines.push(`                }`);
+    } else {
+      if (optUuid)
+        lines.push(`                insertItem.${M('put')}(${S(pkField)}, ${T('UUID')}.${M('randomUUID')}().${M('toString')}());`);
+      if (optSeq && seqCol && seqCode)
+        lines.push(`                insertItem.${M('put')}(${S(seqCol)}, sharedService.${M('generateDocumentNumber')}(${S(seqCode)}));`);
+      lines.push(`                ${repoInst}.${M('insert' + className)}(insertItem);`);
+    }
+    lines.push(`            }`);
+    lines.push(`        }`);
+    // update
+    lines.push(`        ${C('// Step 2: Update')}`);
+    lines.push(`        ${listMapOf()} updateItems = (${listMapOf()}) param.${M('get')}(${S('updateItems')});`);
+    lines.push(`        ${K('if')}(updateItems != ${K('null')} ) {`);
+    lines.push(`            ${K('for')}(${mapOf()} updateItem : updateItems) {`);
+    if (optDupCheckUpdate) {
+      lines.push(`                ${K('if')}(${repoInst}.${M('hasDuplicate' + className)}(updateItem) > 0) {`);
+      lines.push(`                    ${K('return')} ${T('ResultMap')}.${M('DUPLICATED')}();`);
+      lines.push(`                }`);
+    }
+    lines.push(`                ${repoInst}.${M('update' + className)}(updateItem);`);
+    lines.push(`            }`);
+    lines.push(`        }`);
+    lines.push(`        ${K('return')} ${T('ResultMap')}.${M('SUCCESS')}();`);
+    lines.push(`    }`);
+  }
+
+  if (mDeleteOne) {
+    const mn = 'delete' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + er + ' 삭제한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${K('public')} ${T('ResultMap')} ${M(mn)}(${mapOf()} param){`);
+    lines.push(`        ${repoInst}.${M('delete' + className)}(param);`);
+    lines.push(`        ${K('return')} ${T('ResultMap')}.${M('SUCCESS')}();`);
+    lines.push(`    }`);
+  }
+
+  if (mDelete) {
+    const mn = 'deleteList' + className;
+    lines.push('');
+    lines.push(javadoc('    ', featureKo + ' 리스트를 삭제한다.', 'ResultMap', author, date, mn));
+    lines.push(`    ${K('public')} ${T('ResultMap')} ${M(mn)}(${mapOf()} param){`);
+    lines.push(`        ${listMapOf()} deleteItems = (${listMapOf()}) param.${M('get')}(${S('deleteItems')});`);
+    lines.push(`        ${K('if')}(deleteItems != ${K('null')} ) {`);
+    lines.push(`            ${K('for')}(${mapOf()} deleteItem : deleteItems) {`);
+    lines.push(`                ${repoInst}.${M('delete' + className)}(deleteItem);`);
+    lines.push(`            }`);
+    lines.push(`        }`);
+    lines.push(`        ${K('return')} ${T('ResultMap')}.${M('SUCCESS')}();`);
+    lines.push(`    }`);
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+/* ─────────────────────────────────────────────
+   Repository 생성
+───────────────────────────────────────────── */
+function buildRepository(c) {
+  const { basePkg, modName, ns, className, mFindList, mFindOne, mSaveOne, mSave, mDeleteOne, mDelete,
+          optDupCheckInsertOne, optDupCheckUpdateOne, optDupCheckInsert, optDupCheckUpdate } = c;
+  const needInsert = mSave || mSaveOne;
+  const needDupCheck = optDupCheckInsertOne || optDupCheckUpdateOne || optDupCheckInsert || optDupCheckUpdate;
+  const lines = [];
+
+  lines.push(`${K('package')} ${P(basePkg + '.' + modName + '.repository')};`);
+  lines.push('');
+  lines.push(`${K('import')} org.apache.ibatis.session.SqlSession;`);
+  lines.push(`${K('import')} org.springframework.stereotype.Service;`);
+  lines.push(`${K('import')} org.springframework.transaction.annotation.Transactional;`);
+  lines.push('');
+  lines.push(`${K('import')} javax.inject.Inject;`);
+  lines.push(`${K('import')} java.util.List;`);
+  lines.push(`${K('import')} java.util.Map;`);
+  lines.push('');
+  lines.push(A('@Service'));
+  lines.push(A('@Transactional'));
+  lines.push(`${K('public')} ${K('class')} ${CN(className + 'Repository')} {`);
+  lines.push('');
+  lines.push(`    ${K('private')} ${K('static')} ${T('String')} NAMESPACE = ${S(ns + '.')};`);
+  lines.push('');
+  lines.push(`    ${A('@Inject')}`);
+  lines.push(`    ${K('private')} ${T('SqlSession')} sqlSession;`);
+
+  if (mFindOne) {
+    const mn = 'find' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${mapOf()} ${M(mn)}(${mapOf()} param) {`);
+    lines.push(`        ${K('return')} sqlSession.${M('selectOne')}(NAMESPACE + ${S(mn)}, param);`);
+    lines.push(`    }`);
+  }
+  if (mFindList) {
+    const mn = 'findList' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${listMap()} ${M(mn)}(${mapOf()} param) {`);
+    lines.push(`        ${K('return')} sqlSession.${M('selectList')}(NAMESPACE + ${S(mn)}, param);`);
+    lines.push(`    }`);
+  }
+  if (needInsert && needDupCheck) {
+    const mn = 'hasDuplicate' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${K('int')} ${M(mn)}(${mapOf()} param) {`);
+    lines.push(`        ${K('return')} sqlSession.${M('selectOne')}(NAMESPACE + ${S(mn)}, param);`);
+    lines.push(`    }`);
+  }
+  if (needInsert) {
+    const mn = 'insert' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${K('void')} ${M(mn)}(${mapOf()} param) {`);
+    lines.push(`        sqlSession.${M('insert')}(NAMESPACE + ${S(mn)}, param);`);
+    lines.push(`    }`);
+    const mn2 = 'update' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${K('void')} ${M(mn2)}(${mapOf()} param) {`);
+    lines.push(`        sqlSession.${M('update')}(NAMESPACE + ${S(mn2)}, param);`);
+    lines.push(`    }`);
+  }
+  if (mDeleteOne || mDelete) {
+    const mn = 'delete' + className;
+    lines.push('');
+    lines.push(`    ${K('public')} ${K('void')} ${M(mn)}(${mapOf()} param) {`);
+    lines.push(`        sqlSession.${M('update')}(NAMESPACE + ${S(mn)}, param);`);
+    lines.push(`    }`);
+  }
+
+  lines.push('}');
+  return lines.join('\n');
+}
+
+/* ─────────────────────────────────────────────
+   전체 텍스트 (복사용 plain text)
+───────────────────────────────────────────── */
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
+/* ─────────────────────────────────────────────
+   메인 생성
+───────────────────────────────────────────── */
+let generatedText = {};
+let rawText = {};
+
+function generate() {
+  const cfg = getCfg();
+  const cn = cfg.className;
+
+  const ctrlHtml = buildController(cfg);
+  const svcHtml  = buildService(cfg);
+  const repoHtml = buildRepository(cfg);
+
+  // file name tags
+  document.getElementById('file-ctrl').textContent = cn + 'Controller.java';
+  document.getElementById('file-svc').textContent  = cn + 'Service.java';
+  document.getElementById('file-repo').textContent = cn + 'Repository.java';
+
+  // set output
+  document.getElementById('code-ctrl').innerHTML = ctrlHtml;
+  document.getElementById('code-svc').innerHTML  = svcHtml;
+  document.getElementById('code-repo').innerHTML = repoHtml;
+
+  // plain text 저장 (복사 / 다운로드 시 사용)
+  const divider = '\n\n' + '='.repeat(60) + '\n\n';
+  rawText = {
+    ctrl: stripHtml(ctrlHtml),
+    svc:  stripHtml(svcHtml),
+    repo: stripHtml(repoHtml),
+  };
+  generatedText = {
+    ctrl: `// ${cn}Controller.java\n\n` + rawText.ctrl,
+    svc:  `// ${cn}Service.java\n\n`    + rawText.svc,
+    repo: `// ${cn}Repository.java\n\n` + rawText.repo,
+  };
+  generatedText.all = generatedText.ctrl + divider + generatedText.svc + divider + generatedText.repo;
+
+  // Controller 탭으로 포커스
+  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+  document.querySelector('.q-tab').classList.add('active');
+  document.getElementById('block-ctrl').classList.add('active');
+
+  showToast('코드가 생성되었습니다 ✓');
+}
+
+/* ─────────────────────────────────────────────
+   UI 이벤트
+───────────────────────────────────────────── */
+function onModuleChange() {
+  const basePkg = document.getElementById('base-pkg').value.trim();
+  const mod     = document.getElementById('module-name').value.trim();
+  // URL 매핑이 수동 변경되지 않은 경우에만 자동 갱신
+  const urlEl = document.getElementById('url-mapping');
+  if (!urlEl.dataset.manual) urlEl.value = toUrlMapping(basePkg, mod);
+  const nsEl  = document.getElementById('namespace');
+  if (!nsEl.dataset.manual)  nsEl.value  = toNamespace(mod);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  // URL 매핑·네임스페이스 수동 편집 감지
+  ['url-mapping','namespace'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+      this.dataset.manual = '1';
+    });
+  });
+  // 오늘 날짜 기본값
+  document.getElementById('date').value = today();
+  // PK 필드 wrap 표시/숨기기
+  onOptionsChange();
+});
+
+function onInputChange() { /* 입력 변경 시 실시간 갱신 필요 없음 */ }
+
+function onOptionsChange() {}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.q-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.code-block').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('block-' + tab).classList.add('active');
+}
+
+function copyBlock(tab) {
+  const txt = generatedText[tab];
+  if (!txt) { showToast('먼저 코드를 생성하세요'); return; }
+  navigator.clipboard.writeText(txt).then(() => showToast('클립보드에 복사되었습니다 ✓'));
+}
+
+async function downloadZip() {
+  if (!rawText.ctrl) { showToast('먼저 코드를 생성하세요'); return; }
+  const cfg = getCfg();
+  const cn  = cfg.className;
+  const mod = cfg.modName;
+
+  const zip = new JSZip();
+  zip.file(`${mod}/${cn}Controller.java`,           rawText.ctrl);
+  zip.file(`${mod}/service/${cn}Service.java`,      rawText.svc);
+  zip.file(`${mod}/repository/${cn}Repository.java`, rawText.repo);
+
+  const blob = await zip.generateAsync({ type: 'blob' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href     = url;
+  a.download = `${mod}.zip`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast(`${mod}.zip 다운로드 완료 ✓`);
+}
+
+function loadSample() {
+  document.getElementById('base-pkg').value    = 'com.example.app';
+  document.getElementById('module-name').value = 'sampleModule';
+  document.getElementById('feature-ko').value  = '샘플 모듈';
+  document.getElementById('author').value      = 'Gildong Hong';
+  document.getElementById('date').value        = '2026. 03. 25';
+  // 자동 파생 초기화
+  delete document.getElementById('url-mapping').dataset.manual;
+  delete document.getElementById('namespace').dataset.manual;
+  document.getElementById('pk-field').value = 'sam_mod_uuid';
+  document.getElementById('opt-find-list').checked = true;
+  document.getElementById('opt-find-one').checked  = true;
+  document.getElementById('opt-save-one').checked  = true;
+  document.getElementById('opt-save').checked      = true;
+  document.getElementById('opt-delete-one').checked = true;
+  document.getElementById('opt-delete').checked    = true;
+  document.getElementById('opt-dup-check-insert-one').checked = true;
+  document.getElementById('opt-dup-check-update-one').checked = true;
+  document.getElementById('opt-dup-check-insert').checked = true;
+  document.getElementById('opt-dup-check-update').checked = true;
+  document.getElementById('opt-uuid').checked      = true;
+  document.getElementById('opt-seq').checked       = true;
+  document.getElementById('seq-col').value         = 'sam_mod_cd';
+  document.getElementById('seq-code').value        = 'sam';
+  onModuleChange();
+  onOptionsChange();
+  generate();
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function toggleTheme() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  document.documentElement.setAttribute('data-theme', isLight ? '' : 'light');
+  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+}
+
+/* Ctrl+Enter 단축키 */
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); generate(); }
+});
+</script>
+</body>
+</html>
